@@ -314,32 +314,35 @@ function createPlaylist(genres, genreIndex, lengthThresholds, accessToken, userI
 
         request.post(createPlaylistOptions, function (error, response, body) {
             if (!error) {
-                // console.log(body);
                 const playlistID = JSON.parse(body).id;
-                // console.log('PLAYLISTID');
-                // console.log(playlistID);
                 finalRes.send(playlistID);
-                let populatePlaylistOptions = {
-                    url: 'https://api.spotify.com/v1/users/' + userID + '/playlists/' + playlistID + '/tracks',
-                    body: JSON.stringify(shuffle(result)),
-                    dataType: 'json',
-                    headers: {
-                        'Authorization': 'Bearer ' + accessToken,
-                        'Content-Type': 'application/json',
-                    }
-                };
-
-                console.log(populatePlaylistOptions);
-
-                request.post(populatePlaylistOptions, function (error, response, body) {
-                    if (!error) {
-                        // console.log(body);
-                        finalRes.send(playlistID);
-                    } else {
-                        console.log(error);
-                        // finalRes.send(-1);
-                    }
-                });
+                addSongsToPlaylist(shuffle(result), 0, userID, playlistID, accessToken)
+                // // console.log(body);
+                // const playlistID = JSON.parse(body).id;
+                // // console.log('PLAYLISTID');
+                // // console.log(playlistID);
+                // finalRes.send(playlistID);
+                // let populatePlaylistOptions = {
+                //     url: 'https://api.spotify.com/v1/users/' + userID + '/playlists/' + playlistID + '/tracks',
+                //     body: JSON.stringify(shuffle(result)),
+                //     dataType: 'json',
+                //     headers: {
+                //         'Authorization': 'Bearer ' + accessToken,
+                //         'Content-Type': 'application/json',
+                //     }
+                // };
+                //
+                // console.log(populatePlaylistOptions);
+                //
+                // request.post(populatePlaylistOptions, function (error, response, body) {
+                //     if (!error) {
+                //         // console.log(body);
+                //         finalRes.send(playlistID);
+                //     } else {
+                //         console.log(error);
+                //         // finalRes.send(-1);
+                //     }
+                // });
             } else {
                 console.log(error);
                 finalRes.send(-1);
@@ -382,6 +385,44 @@ function createPlaylist(genres, genreIndex, lengthThresholds, accessToken, userI
             createPlaylist(genres, genreIndex + 1, lengthThresholds, accessToken, userID, result, resultSet, currLength, playlistName, finalRes);
         });
     }
+}
+
+function addSongsToPlaylist(allSongIDs, index, userID, playlistID, accessToken) {
+    // console.log('PLAYLISTID');
+    // console.log(playlistID);
+
+    if (index >= allSongIDs.length) {
+        return;
+    }
+
+    let requestSongIDs = [];
+    const limit = index + 99;
+    while (index < Math.min(limit, allSongIDs.length)) {
+        requestSongIDs.push(allSongIDs[index]);
+        index += 1;
+    }
+
+    let populatePlaylistOptions = {
+        url: 'https://api.spotify.com/v1/users/' + userID + '/playlists/' + playlistID + '/tracks',
+        body: JSON.stringify(requestSongIDs),
+        dataType: 'json',
+        headers: {
+            'Authorization': 'Bearer ' + accessToken,
+            'Content-Type': 'application/json',
+        }
+    };
+
+    console.log(populatePlaylistOptions);
+
+    request.post(populatePlaylistOptions, function (error, response, body) {
+        if (!error) {
+            // console.log(body);
+            addSongsToPlaylist(allSongIDs, index, userID, playlistID, accessToken);
+        } else {
+            console.log(error);
+            // finalRes.send(-1);
+        }
+    });
 }
 
 console.log('Set express router');
