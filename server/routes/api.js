@@ -3,10 +3,14 @@ const express = require('express');
 const request = require('request');
 const bodyParser = require('body-parser');
 const querystring = require('querystring');
+const firebase = require('firebase');
 
 console.log('Running api.js');
 
 spotifyCredentials = JSON.parse(fs.readFileSync('spotify-credentials.json'));
+firebaseCredentials = JSON.parse(fs.readFileSync('firebase-credentials.json'));
+const firebaseApp = firebase.initializeApp(firebaseCredentials);
+const database = firebaseApp.database();
 
 const spotify_client_id = spotifyCredentials['clientId']; // Your client id
 const spotify_client_secret = spotifyCredentials['clientSecret']; // Your secret
@@ -201,12 +205,23 @@ addToDatabase = function (album, genres) {
     const tracks = album.tracks.items;
     // console.log('TRACKDATA');
     // console.log(tracks);
-    const trackIDs = [];
+    const songData = [];
     for (let i = 0; i < tracks.length; i++) {
-        trackIDs.push(tracks[i].id);
+        songData.push({
+            'id': tracks[i].id,
+            'duration-sec': tracks[i].duration_ms / 1000
+        });
     }
-    console.log('TRACKIDS');
-    console.log(trackIDs)
+    console.log('TRACKDATA');
+    console.log(songData);
+
+
+    for (let i = 0; i < genres.length; i++) {
+        database.ref('genre-directory/' + genres[i]).set(genres[i]);
+        for (let j = 0; j < songData.length; j++) {
+            database.ref('song-ids/' + genres[i] + '/' + songData[j].id).set(songData[j]);
+        }
+    }
 };
 
 console.log('Set express router');

@@ -64,3 +64,7 @@ typings/
 
 # credentials
 spotify-credentials.json
+firebase-credentials.json
+
+# package lock
+package-lock.json
