@@ -79,10 +79,7 @@
             <!--</div>-->
 
             <div class="row" id="slider-collection">
-                <div class="col-md-2 col-sm-3 col-xs-6">
-                    <input type="range" min="1" max="100" value="50" class="slider" title="rock" id="RockSlider">
-                    <span>Rock</span>
-                </div>
+                <!--Sliders-->
             </div>
 
             <!-- <div class="media-body">
@@ -168,7 +165,7 @@
                         authResponse = response;
                         $('#login').hide();
                         $('#loggedin').show();
-                        refreshSliders();
+                        refreshSliders(true);
                     }
                 });
             } else {
@@ -217,7 +214,9 @@
                 return div.firstChild;
             }
 
-            function refreshSliders() {
+            const commonGenres = ['pop', 'soul', 'rap', 'rock', 'r&b', 'dance pop', 'country', 'emo'];
+
+            function refreshSliders(useCommonGenres) {
                 $.ajax({
                     url: '/api/genre-list',
                     success: function (response) {
@@ -226,19 +225,23 @@
                         const sliderCollection = document.getElementById('slider-collection');
                         console.log(sliderCollection);
                         for (let i = 0; i < genreList.length; i++) {
-                            const titleCaseGenre = toTitleCase(genreList[i]);
-//                            const genre = genreList[i].replace(/[^\w\s]/gi, '').replace(/\s/, '');
                             const genre = genreList[i];
-//                            console.log(titleCaseGenre);
-//                            console.log(genre);
-                            const container = `
+                            if (!useCommonGenres || commonGenres.includes(genre)) {
+                                const titleCaseGenre = toTitleCase(genre);
+//                            const genre = genreList[i].replace(/[^\w\s]/gi, '').replace(/\s/, '');
+                                let container = `
                                 <div class="col-md-2 col-sm-3 col-xs-6">
-                                    <input type="range" min="1" max="100" value="50" class="slider" title="VARIABLE_GENRE" id="VARIABLE_GENRE">
+                                    <input type="range" min="1" max="100" value="0" class="slider" title="VARIABLE_GENRE" id="VARIABLE_GENRE">
+                                    <br>
                                     <span>TITLE_CASE_GENRE</span>
                                 </div>
                             `.replace(/VARIABLE_GENRE/g, genre).replace('TITLE_CASE_GENRE', titleCaseGenre);
-                            console.log(container);
-                            sliderCollection.appendChild(createElementFromHTML(container));
+                                if (useCommonGenres) {
+                                    container = container.replace('col-md-2 ', '');
+                                }
+                                console.log(container);
+                                sliderCollection.appendChild(createElementFromHTML(container));
+                            }
                         }
                     }
                 });
