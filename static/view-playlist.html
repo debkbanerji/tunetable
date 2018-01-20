@@ -193,11 +193,15 @@
 
         let playlistTemplate = `
         <iframe src="https://open.spotify.com/embed?uri=spotify:user:USER_ID:playlist:PLAYLIST_ID"
-                width="1000" height="500" frameborder="0" allowtransparency="true"></iframe>
+                width="PLAYER_WIDTH" height="PLAYER_HEIGHT" frameborder="0" allowtransparency="true"></iframe>
 `;
         playlistTemplate = playlistTemplate
             .replace('PLAYLIST_ID', getQueryVariable('playlist'))
             .replace('USER_ID', getQueryVariable('user'));
+        const playerWidth = $(window).width() * 0.75;
+        const playerHeight =  $(window).width() * 0.45;
+        playlistTemplate = playlistTemplate.replace('PLAYER_WIDTH', playerWidth.toString());
+        playlistTemplate = playlistTemplate.replace('PLAYER_HEIGHT', playerHeight.toString());
         document.getElementById('playlist-container').appendChild(createElementFromHTML(playlistTemplate));
 
 
