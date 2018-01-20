@@ -224,27 +224,36 @@ addToDatabase = function (album, genres) {
     }
 };
 
-router.get('/genre-list',function (req, res) {
-    database.ref('/genre-directory').once('value').then(function(snapshot) {
+shuffle = function (a) {
+    let j, x, i;
+    for (i = a.length - 1; i > 0; i--) {
+        j = Math.floor(Math.random() * (i + 1));
+        x = a[i];
+        a[i] = a[j];
+        a[j] = x;
+    }
+    return a; // Note: This is an in place shuffle, so a return statement is not necessary
+};
+
+router.get('/genre-list', function (req, res) {
+    database.ref('/genre-directory').once('value').then(function (snapshot) {
         const genreList = Object.keys(snapshot.val());
         res.send(genreList);
     });
 });
 
-router.post('/create-playlist',function (req, finalRes) {
+router.post('/create-playlist', function (req, finalRes) {
     // database.ref('/genre-directory').once('value').then(function(snapshot) {
     //     const genreList = Object.keys(snapshot.val());
     //     res.send(genreList);
     // });
     const accessToken = req.body.access_token;
     const targetLengthSec = req.body.target_length_mins * 60;
+    const playlistName = req.body.playlist_name;
     const genreBreakdown = JSON.parse(req.body.genre_breakdown);
-    console.log(req.body);
-    console.log(genreBreakdown);
+    // console.log(req.body);
+    // console.log(genreBreakdown);
     const genres = Object.keys(genreBreakdown);
-
-    const result = [];
-    const resultSet = new Set();
 
     for (let i = 0; i < genres.length; i++) {
         const genre = genres[i];
@@ -254,8 +263,72 @@ router.post('/create-playlist',function (req, finalRes) {
         }
     }
 
-    console.log(genreBreakdown);
+    // console.log(genreBreakdown);
+
+    let totalLength = 0;
+    for (let i = 0; i < genres.length; i++) {
+        const genre = genres[i];
+        totalLength += genreBreakdown[genre];
+    }
+
+    let lengthThresholds = [];
+    for (let i = 0; i < genres.length; i++) {
+        const genre = genres[i];
+        let length = genreBreakdown[genre];
+        lengthThresholds[i] = Math.round(targetLengthSec * length / totalLength);
+        if (i > 1) {
+            lengthThresholds[i] += lengthThresholds[i - 1];
+        }
+    }
+
+    console.log(genres);
+    console.log(lengthThresholds);
+
+    // console.log(totalLength);
+    // console.log(targetLengthSec);
+
+    const result = [];
+    const resultSet = new Set();
+
+    createPlaylist(genres, 0, lengthThresholds, accessToken
+        , result, resultSet, 0, playlistName)
 });
+
+function createPlaylist(genres, genreIndex, lengthThresholds, accessToken, result, resultSet, currLength, playlistName) {
+    if (genreIndex >= genres.length) {
+        // create playlist
+    } else {
+        database.ref('/song-ids/' + genres[genreIndex]).once('value').then(function (snapshot) {
+            // console.log(snapshot.val());
+            // console.log(Object.values(snapshot.val()));
+            const genreSongs = shuffle(Object.values(snapshot.val()));
+            console.log(genreSongs);
+
+            let newSongsAvailable = false;
+            for (let i = 0; i < genreSongs.length; i++) {
+                newSongsAvailable = newSongsAvailable || (!resultSet.has(genreSongs[i].id));
+            }
+
+            let i = 0;
+
+            let thisGenreSet = new Set();
+
+            while (currLength < lengthThresholds[genreIndex]) {
+                const id = genreSongs[i].id;
+                if (!newSongsAvailable || !resultSet.has(id)) {
+                    thisGenreSet.add(id);
+                    result.push(id);
+                    currLength += genreSongs[i]['duration-sec'];
+                }
+                i = (i + 1) % genreSongs.length;
+            }
+
+            for (let item of thisGenreSet) resultSet.add(item);
+
+            console.log(result);
+        });
+    }
+}
 
 console.log('Set express router');
 
