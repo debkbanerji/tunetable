@@ -281,8 +281,8 @@ router.post('/create-playlist', function (req, finalRes) {
         }
     }
 
-    console.log(genres);
-    console.log(lengthThresholds);
+    // console.log(genres);
+    // console.log(lengthThresholds);
 
     // console.log(totalLength);
     // console.log(targetLengthSec);
@@ -297,12 +297,13 @@ router.post('/create-playlist', function (req, finalRes) {
 function createPlaylist(genres, genreIndex, lengthThresholds, accessToken, result, resultSet, currLength, playlistName) {
     if (genreIndex >= genres.length) {
         // create playlist
+        console.log(result);
     } else {
         database.ref('/song-ids/' + genres[genreIndex]).once('value').then(function (snapshot) {
             // console.log(snapshot.val());
             // console.log(Object.values(snapshot.val()));
             const genreSongs = shuffle(Object.values(snapshot.val()));
-            console.log(genreSongs);
+            // console.log(genreSongs);
 
             let newSongsAvailable = false;
             for (let i = 0; i < genreSongs.length; i++) {
@@ -325,7 +326,9 @@ function createPlaylist(genres, genreIndex, lengthThresholds, accessToken, resul
 
             for (let item of thisGenreSet) resultSet.add(item);
 
-            console.log(result);
+            // console.log(result.length);
+
+            createPlaylist(genres, genreIndex + 1, lengthThresholds, accessToken, result, resultSet, currLength, playlistName);
         });
     }
 }
