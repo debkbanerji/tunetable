@@ -38,9 +38,8 @@
         }
 
         .container-fluid {
-        padding: 40px;
+            padding: 40px;
         }
-
 
         .slidecontainer {
             width: 100%;
@@ -49,9 +48,9 @@
         }
 
         .slider-text {
-             text-shadow: 0 0 5px #FF0000, 0 0 7px #0000FF;
+            text-shadow: 0 0 5px #FF0000, 0 0 7px #0000FF;
             font-size: 40px;
-            font-family: 'VT323' , monospace;
+            font-family: 'VT323', monospace;
         }
 
         .slider-padding {
@@ -59,88 +58,94 @@
         }
 
         .slider {
-    -webkit-appearance: none;
-    width: 100%;
-    height: 10px;
-    border-radius: 2px;
-    background-color: cyan;
-     background: linear-gradient(to right, black, #402037);
+            -webkit-appearance: none;
+            width: 100%;
+            height: 10px;
+            border-radius: 2px;
+            background-color: cyan;
+            background: linear-gradient(to right, black, #402037);
 
-    outline: white;
-    opacity: 3.0;
-   -webkit-transition: .2s;
-    transition: opacity .5s;
-    }
+            outline: white;
+            opacity: 3.0;
+            -webkit-transition: .2s;
+            transition: opacity .5s;
+        }
 
-.slider::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    width: 30px;
-    height: 30px;
-    border-radius: 50%;
-    -webkit-transition: .2s;
-    transition: opacity .5s;
-    background: url('assets/png/sliderdial.png');
-    cursor: pointer;
-}
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            -webkit-transition: .2s;
+            transition: opacity .5s;
+            background: url('assets/png/sliderdial.png');
+            cursor: pointer;
+        }
 
-.slider::-moz-range-thumb {
-    width: 30px;
-    height: 30px;
-    border-radius: 50%;
-    border-width: thin;
-    border-color: cyan;
-    background: url('assets/png/sliderdial.png');
-    cursor: pointer;
-    -webkit-transition: .2s;
-    transition: opacity .5s;
-}
+        .slider::-moz-range-thumb {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            border-width: thin;
+            border-color: cyan;
+            background: url('assets/png/sliderdial.png');
+            cursor: pointer;
+            -webkit-transition: .2s;
+            transition: opacity .5s;
+        }
 
-    .button {
-        border-color: gray;
-        background-color: #101427;
-        border: solid;
-        border-radius: 20px;
-        color: white;
-        text-align: center;
-        padding: 15px 30px;
-        font-size: 2.0em;
-        -webkit-transition-duration: 0.3s; /* Safari */
-        transition-duration: 0.3s;
-        font-family: 'VT323', monospace;
-        text-shadow: 0 0 5px #FF0000, 0 0 7px #0000FF;
+        .button {
+            border-color: gray;
+            background-color: #101427;
+            border: solid;
+            border-radius: 20px;
+            color: white;
+            text-align: center;
+            padding: 15px 30px;
+            font-size: 2.0em;
+            -webkit-transition-duration: 0.3s; /* Safari */
+            transition-duration: 0.3s;
+            font-family: 'VT323', monospace;
+            text-shadow: 0 0 5px #FF0000, 0 0 7px #0000FF;
 
-    }
+        }
 
-    .button:hover {
-        background-color: white;
-        color: ;
-        font-size: 2.3em;
-        text-shadow: 0 0 8px #FF0000, 0 0 10px #0000FF;
+        .button:hover {
+            background-color: white;
+            color:;
+            font-size: 2.3em;
+            text-shadow: 0 0 8px #FF0000, 0 0 10px #0000FF;
 
-    }
-    .form-style-1{
-      padding: 30px 30px 15px 30px;
-      text-align:center;
-    }
-    .form-style-1 input[type=text]{
-      font-family: font-family: 'Dosis', sans-serif;
-         font-size: 25px;
-         color: #6DCBDA;
-         background: transparent;
-        border: none;
-        border-bottom: 2px dashed #3B318F;
-        width: 275px;
-        outline: none;
-        padding: 0px 0px 0px 0px;
-        text-align:center;
-    }
-    .form-style-1 label > span{
-        display: inline-block;
-        width: 200px;
-        font-size: 25px;
-        color:#ffff;
-    }
+        }
 
+        .form-style-1 {
+            padding: 30px 30px 15px 30px;
+            text-align: center;
+        }
+
+        .form-style-1 input[type=text] {
+            font-family: font-family: 'Dosis', sans-serif;
+            font-size: 25px;
+            color: #6DCBDA;
+            background: transparent;
+            border: none;
+            border-bottom: 2px dashed #3B318F;
+            width: 275px;
+            outline: none;
+            padding: 0px 0px 0px 0px;
+            text-align: center;
+        }
+
+        .form-style-1 label > span {
+            display: inline-block;
+            width: 200px;
+            font-size: 25px;
+            color: #ffff;
+        }
+
+        #btn-generate {
+            cursor: pointer
+        }
 
     </style>
 </head>
@@ -149,7 +154,8 @@
 <div class="container">
     <div id="login">
         <h1>Please Login to your Spotify Account</h1>
-        <div class="container-fluid"><a href="/api/login" class="text-center btn btn-primary">Log in with Spotify</a></div>
+        <div class="container-fluid"><a href="/api/login" class="text-center btn btn-primary">Log in with Spotify</a>
+        </div>
     </div>
     <div id="loggedin">
         <div id="user-profile">
@@ -158,7 +164,8 @@
         </div>
         <button data-toggle="collapse" data-target="#collapse-div">Collapsible</button>
         <div class="collapse" id="collapse-div">
-            <button class=" btn btn-default" id="obtain-new-token">Obtain new token using the refresh token</button></div>
+            <button class=" btn btn-default" id="obtain-new-token">Obtain new token using the refresh token</button>
+        </div>
         <br>
         <input type="text" title="album-id" id="album-id-to-scrape">
         <br>
@@ -171,8 +178,9 @@
 
 
         <div class="container-fluid text-center"><img class="title-img"
-                src="https://fontmeme.com/permalink/180120/80336b3832e6dcf080761ea73258331d.png" alt="razor-free-font"
-                border="0"></div>
+                                                      src="https://fontmeme.com/permalink/180120/80336b3832e6dcf080761ea73258331d.png"
+                                                      alt="razor-free-font"
+                                                      border="0"></div>
         <!--<h1 class="header text-center">TuneTable</h1>-->
         <div class="container-fluid text-center title-img"><img src="assets/png/logo2.png"></div>
 
@@ -185,44 +193,44 @@
             </div>
             -->
 
-            <!--<div class="text-center slidecontainer container-fluid">-->
-            <!--<input type="range" min="1" max="100" value="50" class="slider" id="RockSlider">-->
-            <!--</div>-->
+        <!--<div class="text-center slidecontainer container-fluid">-->
+        <!--<input type="range" min="1" max="100" value="50" class="slider" id="RockSlider">-->
+        <!--</div>-->
 
-            <div class=" text-center row slidecontainer container-fluid" id="slider-collection">
-                <!--Sliders-->
+        <div class=" text-center row slidecontainer container-fluid" id="slider-collection">
+            <!--Sliders-->
 
-            </div>
-            <form class="form-style-1" action="" method="post">
-            <label for="field1">
-            <span>Playlist Name: </span><input type="text" name="field1" required="true" placeholder="Enter Playlist Name" />
-            </label>
-          </form>
-
-            <div class="text-center container-fluid">
-                <button id="btn-generate" type="button" class="button text-center">Generate!</button>
-            </div>
-
-
-            <!-- <div class="media-body">
-                 <dl class="dl-horizontal">
-                     <dt>Display name</dt>
-                     <dd class="clearfix">{{display_name}}</dd>
-                     <dt>Id</dt>
-                     <dd>{{id}}</dd>
-                     <dt>Email</dt>
-                     <dd>{{email}}</dd>
-                     <dt>Spotify URI</dt>
-                     <dd><a href="{{external_urls.spotify}}">{{external_urls.spotify}}</a></dd>
-                     <dt>Link</dt>
-                     <dd><a href="{{href}}">{{href}}</a></dd>
-                     <dt>Profile Image</dt>
-                     <dd class="clearfix"><a href="{{images.0.url}}">{{images.0.url}}</a></dd>
-                     <dt>Country</dt>
-                     <dd>{{country}}</dd>
-                 </dl>
-             </div> -->
         </div>
+        <form class="form-style-1" action="" method="post">
+            <label for="playlist-name">
+                <span>Playlist Name: </span><input type="text" id="playlist-name" placeholder="Enter Playlist Name"/>
+            </label>
+        </form>
+
+        <div class="text-center container-fluid">
+            <button id="btn-generate" type="button" class="button text-center">Generate!</button>
+        </div>
+
+
+        <!-- <div class="media-body">
+             <dl class="dl-horizontal">
+                 <dt>Display name</dt>
+                 <dd class="clearfix">{{display_name}}</dd>
+                 <dt>Id</dt>
+                 <dd>{{id}}</dd>
+                 <dt>Email</dt>
+                 <dd>{{email}}</dd>
+                 <dt>Spotify URI</dt>
+                 <dd><a href="{{external_urls.spotify}}">{{external_urls.spotify}}</a></dd>
+                 <dt>Link</dt>
+                 <dd><a href="{{href}}">{{href}}</a></dd>
+                 <dt>Profile Image</dt>
+                 <dd class="clearfix"><a href="{{images.0.url}}">{{images.0.url}}</a></dd>
+                 <dt>Country</dt>
+                 <dd>{{country}}</dd>
+             </dl>
+         </div> -->
+    </div>
     </div>
 </script>
 
@@ -289,7 +297,7 @@
                         user_id = response.id;
                         $('#login').hide();
                         $('#loggedin').show();
-                        refreshSliders(true);
+                        refreshSliders(false);
                         addGenerateButtonListener();
                     }
                 });
@@ -381,15 +389,18 @@
                             genre_breakdown[sliders[i].id] = sliders[i].value;
                         }
                     }
-                    if (nonzeroValue) {
+                    const playlistName = document.getElementById('playlist-name').value;
+                    if (nonzeroValue && playlistName && playlistName.length > 0) {
+                        document.getElementById('playlist-name').value = null;
+                        console.log(playlistName);
                         $.ajax({
                             type: "POST",
                             url: '/api/create-playlist/',
                             data: {
                                 'access_token': access_token,
                                 'user_id': user_id,
-                                'playlist_name': 'My Cool Playlist',
-                                'target_length_mins': 120,
+                                'playlist_name': playlistName,
+                                'target_length_mins': 150,
                                 'genre_breakdown': JSON.stringify(genre_breakdown)
                             }
                         }).done(function (data) {

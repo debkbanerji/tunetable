@@ -318,6 +318,7 @@ function createPlaylist(genres, genreIndex, lengthThresholds, accessToken, userI
                 const playlistID = JSON.parse(body).id;
                 // console.log('PLAYLISTID');
                 // console.log(playlistID);
+                finalRes.send(playlistID);
                 let populatePlaylistOptions = {
                     url: 'https://api.spotify.com/v1/users/' + userID + '/playlists/' + playlistID + '/tracks',
                     body: JSON.stringify(shuffle(result)),
@@ -328,13 +329,15 @@ function createPlaylist(genres, genreIndex, lengthThresholds, accessToken, userI
                     }
                 };
 
+                console.log(populatePlaylistOptions);
+
                 request.post(populatePlaylistOptions, function (error, response, body) {
                     if (!error) {
                         // console.log(body);
                         finalRes.send(playlistID);
                     } else {
                         console.log(error);
-                        finalRes.send(-1);
+                        // finalRes.send(-1);
                     }
                 });
             } else {
@@ -366,7 +369,7 @@ function createPlaylist(genres, genreIndex, lengthThresholds, accessToken, userI
                     thisGenreSet.add(id);
                     result.push('spotify:track:' + id);
                     currLength += genreSongs[i]['duration-sec'];
-                    // console.log(currLength);
+                    console.log(currLength);
                 }
                 i = (i + 1) % genreSongs.length;
             }
