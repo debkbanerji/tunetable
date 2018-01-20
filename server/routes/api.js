@@ -48,7 +48,8 @@ router.get('/login', function (req, res) {
     res.cookie(stateKey, state);
 
     // your application requests authorization
-    var scope = 'user-read-private user-read-email';
+    let scope = 'user-read-private user-read-email playlist-read-private playlist-read-collaborative' +
+        ' playlist-modify-public playlist-modify-private';
     res.redirect('https://accounts.spotify.com/authorize?' +
         querystring.stringify({
             response_type: 'code',
@@ -291,14 +292,32 @@ router.post('/create-playlist', function (req, finalRes) {
     const result = [];
     const resultSet = new Set();
 
-    createPlaylist(genres, 0, lengthThresholds, accessToken, userID, result, resultSet, 0, playlistName)
+    createPlaylist(genres, 0, lengthThresholds, accessToken, userID, result, resultSet, 0, playlistName, finalRes)
 });
 
-function createPlaylist(genres, genreIndex, lengthThresholds, accessToken, userID, result, resultSet, currLength, playlistName) {
+function createPlaylist(genres, genreIndex, lengthThresholds, accessToken, userID, result, resultSet, currLength, playlistName, finalRes) {
     if (genreIndex >= genres.length) {
         // create playlist
         console.log(result);
         console.log(userID);
+
+        var authOptions1 = {
+            url: 'https://api.spotify.com/v1/users/' + userID + '/playlists',
+            body: JSON.stringify({
+                'name': playlistName,
+                'public': false
+            }),
+            dataType:'json',
+            headers: {
+                'Authorization': 'Bearer ' + accessToken,
+                'Content-Type': 'application/json',
+            }
+        };
+
+        request.post(authOptions1, function(error, response, body) {
+            console.log(body);
+        });
+
     } else {
         database.ref('/song-ids/' + genres[genreIndex]).once('value').then(function (snapshot) {
             // console.log(snapshot.val());
@@ -329,7 +348,7 @@ function createPlaylist(genres, genreIndex, lengthThresholds, accessToken, userI
 
             // console.log(result.length);
 
-            createPlaylist(genres, genreIndex + 1, lengthThresholds, accessToken, userID, result, resultSet, currLength, playlistName);
+            createPlaylist(genres, genreIndex + 1, lengthThresholds, accessToken, userID, result, resultSet, currLength, playlistName, finalRes);
         });
     }
 }
