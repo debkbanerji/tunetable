@@ -248,6 +248,7 @@ router.post('/create-playlist', function (req, finalRes) {
     //     res.send(genreList);
     // });
     const accessToken = req.body.access_token;
+    const userID = req.body.user_id;
     const targetLengthSec = req.body.target_length_mins * 60;
     const playlistName = req.body.playlist_name;
     const genreBreakdown = JSON.parse(req.body.genre_breakdown);
@@ -290,14 +291,14 @@ router.post('/create-playlist', function (req, finalRes) {
     const result = [];
     const resultSet = new Set();
 
-    createPlaylist(genres, 0, lengthThresholds, accessToken
-        , result, resultSet, 0, playlistName)
+    createPlaylist(genres, 0, lengthThresholds, accessToken, userID, result, resultSet, 0, playlistName)
 });
 
-function createPlaylist(genres, genreIndex, lengthThresholds, accessToken, result, resultSet, currLength, playlistName) {
+function createPlaylist(genres, genreIndex, lengthThresholds, accessToken, userID, result, resultSet, currLength, playlistName) {
     if (genreIndex >= genres.length) {
         // create playlist
         console.log(result);
+        console.log(userID);
     } else {
         database.ref('/song-ids/' + genres[genreIndex]).once('value').then(function (snapshot) {
             // console.log(snapshot.val());
@@ -328,7 +329,7 @@ function createPlaylist(genres, genreIndex, lengthThresholds, accessToken, resul
 
             // console.log(result.length);
 
-            createPlaylist(genres, genreIndex + 1, lengthThresholds, accessToken, result, resultSet, currLength, playlistName);
+            createPlaylist(genres, genreIndex + 1, lengthThresholds, accessToken, userID, result, resultSet, currLength, playlistName);
         });
     }
 }

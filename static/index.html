@@ -239,6 +239,7 @@
         var access_token = params.access_token,
             refresh_token = params.refresh_token,
             error = params.error;
+        let user_id;
         if (error) {
             alert('There was an error during the authentication');
         } else {
@@ -256,6 +257,7 @@
                     success: function (response) {
                         userProfilePlaceholder.innerHTML = userProfileTemplate(response);
                         authResponse = response;
+                        user_id = response.id;
                         $('#login').hide();
                         $('#loggedin').show();
                         refreshSliders(true);
@@ -314,10 +316,9 @@
                 $.ajax({
                     url: '/api/genre-list',
                     success: function (response) {
-//                        console.log(response);
                         const genreList = response;
                         const sliderCollection = document.getElementById('slider-collection');
-                        console.log(sliderCollection);
+//                        console.log(sliderCollection);
                         for (let i = 0; i < genreList.length; i++) {
                             const genre = genreList[i];
                             if (!useCommonGenres || commonGenres.includes(genre)) {
@@ -357,6 +358,7 @@
                             url: '/api/create-playlist/',
                             data: {
                                 'access_token': access_token,
+                                'user_id': user_id,
                                 'playlist_name': 'my cool playlist',
                                 'target_length_mins': 120,
                                 'genre_breakdown': JSON.stringify(genre_breakdown)
