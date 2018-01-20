@@ -2,7 +2,8 @@
 <html>
 <head>
     <title>Example of the Authorization Code flow with Spotify</title>
-    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+    <!--Import Bootstrap-->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
     <style type="text/css">
         #login, #loggedin {
             display: none;
@@ -14,10 +15,21 @@
             white-space: nowrap;
             width: 500px;
         }
+
+        .header {
+            font-size: 4.5rem;
+            color: white;
+            }
+
+        .page {
+            background-color: #101427;
+            color: white;
+            }
+
     </style>
 </head>
 
-<body>
+<body class="page">
 <div class="container">
     <div id="login">
         <h1>This is an example of the Authorization Code flow</h1>
@@ -37,8 +49,14 @@
 </div>
 
 <script id="user-profile-template" type="text/x-handlebars-template">
-    <h1>Try out!</h1>
-    <h2>Logged in as {{display_name}}</h2>
+    <div class="page">
+
+
+        <div class="text-center"><a href="#"><img src="https://fontmeme.com/permalink/180120/80336b3832e6dcf080761ea73258331d.png" alt="razor-free-font" border="0"></a></div>
+        <!--<h1 class="header text-center">TuneTable</h1>-->
+        <div class="text-center"><img src="assets/png/logo2.png"></div>
+
+        <h2>Logged in as {{display_name}}</h2>
     <div class="media">
         <div class="pull-left">
             <img class="media-object" width="150" src="{{images.0.url}}"/>
@@ -61,6 +79,7 @@
                 <dd>{{country}}</dd>
             </dl>
         </div>
+    </div>
     </div>
 </script>
 
