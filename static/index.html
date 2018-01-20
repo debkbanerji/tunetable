@@ -94,7 +94,7 @@
             transition: opacity .5s;
         }
 
-        .button {
+        .gen-button {
             border-color: gray;
             background-color: #101427;
             border: solid;
@@ -110,7 +110,7 @@
 
         }
 
-        .button:hover {
+        .gen-button:hover {
             background-color: white;
             color:;
             font-size: 2.3em;
@@ -162,14 +162,14 @@
         </div>
         <div id="oauth">
         </div>
-        <button data-toggle="collapse" data-target="#collapse-div">Collapsible</button>
+        <button hidden data-toggle="collapse" data-target="#collapse-div">Collapsible</button>
         <div class="collapse" id="collapse-div">
-            <button class=" btn btn-default" id="obtain-new-token">Obtain new token using the refresh token</button>
+            <button hidden class=" btn btn-default" id="obtain-new-token">Obtain new token using the refresh token</button>
         </div>
         <br>
-        <input type="text" title="album-id" id="album-id-to-scrape">
+        <input hidden type="text" title="album-id" id="album-id-to-scrape">
         <br>
-        <button class="btn btn-default" id="get-album-info">Scrape new album</button>
+        <button hidden class="btn btn-default" id="get-album-info">Scrape new album</button>
     </div>
 </div>
 
@@ -182,7 +182,7 @@
                                                       alt="razor-free-font"
                                                       border="0"></div>
         <!--<h1 class="header text-center">TuneTable</h1>-->
-        <div class="container-fluid text-center title-img"><img src="assets/png/logo2.png"></div>
+        <div class="container-fluid text-center title-img"><img src="assets/png/logo.png"></div>
 
         <h2 class="text-center slider-text">Get Tunin'</h2>
 
@@ -208,7 +208,12 @@
         </form>
 
         <div class="text-center container-fluid">
-            <button id="btn-generate" type="button" class="button text-center">Generate!</button>
+            <button id="btn-generate" type="button" class="gen-button text-center">Generate!</button>
+        </div>
+
+        <div hidden class="row">
+            <div class="col-1"><button type="button">Dev Options</button></div>
+            <div class="col-11"></div>
         </div>
 
 
