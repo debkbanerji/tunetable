@@ -26,6 +26,15 @@
             color: white;
             }
 
+        .container-fluid {
+            padding-top: 30px;
+            padding-bottom: 30px;
+            }
+
+        .slidecontainer {
+            width: 100%;
+            }
+
     </style>
 </head>
 
@@ -52,16 +61,21 @@
     <div class="page">
 
 
-        <div class="text-center"><a href="#"><img src="https://fontmeme.com/permalink/180120/80336b3832e6dcf080761ea73258331d.png" alt="razor-free-font" border="0"></a></div>
+        <div class="container-fluid text-center"><a href="#"><img src="https://fontmeme.com/permalink/180120/80336b3832e6dcf080761ea73258331d.png" alt="razor-free-font" border="0"></a></div>
         <!--<h1 class="header text-center">TuneTable</h1>-->
-        <div class="text-center"><img src="assets/png/logo2.png"></div>
+        <div class="container-fluid text-center"><img src="assets/png/logo2.png"></div>
 
-        <h2>Logged in as {{display_name}}</h2>
+        <h2 class="text-center">Hey {{display_name}}! Please set the sliders below</h2>
     <div class="media">
         <div class="pull-left">
             <img class="media-object" width="150" src="{{images.0.url}}"/>
         </div>
-        <div class="media-body">
+
+        <div class="text-center slidecontainer container-fluid">
+            <input type="range" min="1" max="100" value="50" class="slider" id="RockSlider">
+        </div>
+
+       <!-- <div class="media-body">
             <dl class="dl-horizontal">
                 <dt>Display name</dt>
                 <dd class="clearfix">{{display_name}}</dd>
@@ -78,19 +92,21 @@
                 <dt>Country</dt>
                 <dd>{{country}}</dd>
             </dl>
-        </div>
+        </div> -->
     </div>
     </div>
 </script>
 
 <script id="oauth-template" type="text/x-handlebars-template">
-    <h2>oAuth info</h2>
+
+   <h2>oAuth info</h2>
     <dl class="dl-horizontal">
         <dt>Access token</dt>
         <dd class="text-overflow">{{access_token}}</dd>
         <dt>Refresh token</dt>
         <dd class="text-overflow">{{refresh_token}}</dd>
     </dl>
+
 </script>
 
 <script src="//cdnjs.cloudflare.com/ajax/libs/handlebars.js/2.0.0-alpha.1/handlebars.min.js"></script>
