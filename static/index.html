@@ -7,6 +7,7 @@
           integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 
     <link href="https://fonts.googleapis.com/css?family=VT323" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Dosis" rel="stylesheet">
 
     <link rel="icon" type="image/x-icon" href="assets/ico/fav.ico?v=2">
 
@@ -117,6 +118,27 @@
         text-shadow: 0 0 8px #FF0000, 0 0 10px #0000FF;
 
     }
+    .form-style-1{
+      padding: 30px 30px 15px 30px;
+      text-align:center;
+    }
+    .form-style-1 input[type=text]{
+      font-family: font-family: 'Dosis', sans-serif;
+         font-size: 25px;
+         color: #6DCBDA;
+         background: transparent;
+        border: none;
+        border-bottom: 2px dashed #3B318F;
+        width: 275px;
+        outline: none;
+        padding: 0px 0px 0px 0px;
+    }
+    .form-style-1 label > span{
+        display: inline-block;
+        width: 200px;
+        font-size: 25px;
+    }
+
 
     </style>
 </head>
@@ -169,6 +191,11 @@
                 <!--Sliders-->
 
             </div>
+            <form class="form-style-1" action="" method="post">
+            <label for="field1">
+            <span>Playlist Name: </span><input type="text" name="field1" required="true" placeholder="Enter Playlist Name" />
+            </label>
+          </form>
 
             <div class="text-center container-fluid">
                 <button id="btn-generate" type="button" class="button text-center">Generate!</button>
