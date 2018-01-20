@@ -8,6 +8,9 @@
 
     <link href="https://fonts.googleapis.com/css?family=VT323" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Dosis" rel="stylesheet">
+
+    <link href="styles/duration-picker.min.css" rel="stylesheet">
+
 <script src="https://use.fontawesome.com/287f0668e1.js"></script>
     <link rel="icon" type="image/x-icon" href="assets/ico/fav.ico?v=2">
 
@@ -160,17 +163,18 @@ color:#000000;
             cursor: pointer
         }
 
+
     </style>
 </head>
 
 <body class="page">
 <div class="container">
     <div id="login">
-      <div class="container-fluid text-center"><img class="title-img"
-                                                    src="assets/png/main-text.png"
-                                                    alt="razor-free-font"
-                                                    border="0"></div>
-      <div class="container-fluid text-center title-img"><img src="assets/png/logo.png"></div>
+        <div class="container-fluid text-center"><img class="title-img"
+                                                      src="assets/png/main-text.png"
+                                                      alt="razor-free-font"
+                                                      border="0"></div>
+        <div class="container-fluid text-center title-img"><img src="assets/png/logo.png"></div>
 
         <div class="container-fluid-landing"><a href="/api/login" class="text-center btn btn-primary">Log in with   <i class="fa fa-spotify" aria-hidden="true"></i>
 Spotify</a>
@@ -184,7 +188,8 @@ Spotify</a>
         </div>
         <button hidden data-toggle="collapse" data-target="#collapse-div">Collapsible</button>
         <div class="collapse" id="collapse-div">
-            <button hidden class=" btn btn-default" id="obtain-new-token">Obtain new token using the refresh token</button>
+            <button hidden class=" btn btn-default" id="obtain-new-token">Obtain new token using the refresh token
+            </button>
         </div>
         <br>
         <input hidden type="text" title="album-id" id="album-id-to-scrape">
@@ -197,7 +202,8 @@ Spotify</a>
     <div class="page">
 
 
-        <div class="container-fluid text-center"><img class="title-img"  src="assets/png/main-text.png"  alt="razor-free-font" border="0"></div>
+        <div class="container-fluid text-center"><img class="title-img" src="assets/png/main-text.png"
+                                                      alt="razor-free-font" border="0"></div>
         <!--<h1 class="header text-center">TuneTable</h1>-->
         <div class="container-fluid text-center title-img"><img src="assets/png/logo.png"></div>
 
@@ -227,8 +233,10 @@ Spotify</a>
         </form> -->
 
         <form class="form-style-1" action="" method="post">
-            <label for="playlist-duration">
-                <span>Duration: </span><input type="time" id="playlist-duration" placeholder="HH:MM"/>
+            <label for="duration">
+                <input type="text" id="duration" name="duration">
+                <!--<span>Duration: </span><input type="time" id="playlist-duration" placeholder="HH:MM"/>-->
+
             </label>
         </form>
 
@@ -243,7 +251,9 @@ Spotify</a>
         </div>
 
         <div hidden class="row">
-            <div class="col-1"><button type="button">Dev Options</button></div>
+            <div class="col-1">
+                <button type="button">Dev Options</button>
+            </div>
             <div class="col-11"></div>
         </div>
 
@@ -285,6 +295,7 @@ Spotify</a>
 
 <script src="//cdnjs.cloudflare.com/ajax/libs/handlebars.js/2.0.0-alpha.1/handlebars.min.js"></script>
 <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+<script src="script/duration-picker.min.js"></script>
 <script>
     (function () {
         var authResponse;
@@ -334,6 +345,7 @@ Spotify</a>
                         user_id = response.id;
                         $('#login').hide();
                         $('#loggedin').show();
+                        
                         refreshSliders(true);
                         addGenerateButtonListener();
                     }
@@ -418,6 +430,8 @@ Spotify</a>
                 });
             }
 
+
+
             function addGenerateButtonListener() {
                 document.getElementById('btn-generate').addEventListener('click', function () {
                     let genre_breakdown = {};
@@ -455,6 +469,7 @@ Spotify</a>
             }
         }
     })();
+
 </script>
 </body>
 </html>
