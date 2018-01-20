@@ -49,7 +49,7 @@
 
         .slider-text {
             text-shadow: 0 0 5px #FF0000, 0 0 7px #0000FF;
-            font-size: 40px;
+            font-size: 2.0rem;
             font-family: 'VT323', monospace;
         }
 
@@ -362,14 +362,14 @@
                                 const titleCaseGenre = toTitleCase(genre);
 //                            const genre = genreList[i].replace(/[^\w\s]/gi, '').replace(/\s/, '');
                                 let container = `
-                                <div class="col-md-6 col-xs-6 slider-padding slider-text">
+                                <div class="col-lg-3 col-md-6 slider-padding slider-text">
                                     <input type="range" min="0" max="100" value="0" class="slider" title="VARIABLE_GENRE" id="VARIABLE_GENRE">
                                     <br>
                                     <span>TITLE_CASE_GENRE</span>
                                 </div>
                             `.replace(/VARIABLE_GENRE/g, genre).replace('TITLE_CASE_GENRE', titleCaseGenre);
                                 if (useCommonGenres) {
-                                    container = container.replace('col-md-2 ', '');
+//                                    container = container.replace('col-md-2 ', '');
                                 }
                                 sliderCollection.appendChild(createElementFromHTML(container));
                             }
