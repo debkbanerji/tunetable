@@ -200,8 +200,8 @@ router.post('/add-album/:id', function (req, finalRes) {
 });
 
 addToDatabase = function (album, genres) {
-    console.log('GENRESDATA');
-    console.log(genres);
+    // console.log('GENRESDATA');
+    // console.log(genres);
     const tracks = album.tracks.items;
     // console.log('TRACKDATA');
     // console.log(tracks);
@@ -212,8 +212,8 @@ addToDatabase = function (album, genres) {
             'duration-sec': tracks[i].duration_ms / 1000
         });
     }
-    console.log('TRACKDATA');
-    console.log(songData);
+    // console.log('TRACKDATA');
+    // console.log(songData);
 
 
     for (let i = 0; i < genres.length; i++) {
@@ -223,6 +223,13 @@ addToDatabase = function (album, genres) {
         }
     }
 };
+
+router.get('/genre-list',function (req, res) {
+    database.ref('/genre-directory').once('value').then(function(snapshot) {
+        const genreList = Object.keys(snapshot.val());
+        res.send(genreList);
+    });
+});
 
 console.log('Set express router');
 
