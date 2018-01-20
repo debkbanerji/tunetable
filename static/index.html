@@ -254,6 +254,7 @@ Spotify</a>
         <div class="text-center container-fluid">
             <button id="btn-generate" type="button" class="gen-button text-center">Generate!</button>
         </div>
+        <p id="error-message"></p>
 
         <div hidden class="row">
             <div class="col-1">
@@ -281,7 +282,6 @@ Spotify</a>
                  <dd>{{country}}</dd>
              </dl>
          </div> -->
-    </div>
     </div>
 </script>
 
@@ -451,6 +451,9 @@ Spotify</a>
                 });
             }
 
+            function setErrorMessage(message) {
+                document.getElementById('error-message').innerHTML = message;
+            }
 
             function addGenerateButtonListener() {
                 document.getElementById('btn-generate').addEventListener('click', function () {
@@ -476,7 +479,7 @@ Spotify</a>
 
                     // TODO: Error handling
                     if (minutes === 0) {
-
+                        setErrorMessage('Choose a valid duration')
                     } else if (minutes > 60 * 16) {
 
                     } else if (!nonzeroValue) {

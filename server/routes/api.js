@@ -412,7 +412,7 @@ function addSongsToPlaylist(allSongIDs, index, userID, playlistID, accessToken) 
         }
     };
 
-    console.log(populatePlaylistOptions);
+    // console.log(populatePlaylistOptions);
 
     request.post(populatePlaylistOptions, function (error, response, body) {
         if (!error) {
