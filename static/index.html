@@ -473,12 +473,12 @@
                     const hours = Number(timerString.split(' h,')[0]);
                     let minutes = Number(timerString.split(' h,')[1].split(' m')[0]);
 
-                    minutes = minutes + 60 * hours
+                    minutes = minutes + 60 * hours;
 
                     // TODO: Error handling
                     if (minutes === 0) {
 
-                    } else if (minutes > 60 * 10) {
+                    } else if (minutes > 60 * 16) {
 
                     } else if (!nonzeroValue) {
 
