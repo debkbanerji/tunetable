@@ -278,15 +278,13 @@ router.post('/create-playlist', function (req, finalRes) {
         const genre = genres[i];
         let length = genreBreakdown[genre];
         lengthThresholds[i] = Math.round(targetLengthSec * length / totalLength);
-        if (i > 1) {
+        if (i > 0) {
             lengthThresholds[i] += lengthThresholds[i - 1];
         }
     }
 
     // console.log(genres);
     // console.log(lengthThresholds);
-
-    // console.log(totalLength);
     // console.log(targetLengthSec);
 
     const result = [];
@@ -298,14 +296,14 @@ router.post('/create-playlist', function (req, finalRes) {
 function createPlaylist(genres, genreIndex, lengthThresholds, accessToken, userID, result, resultSet, currLength, playlistName, finalRes) {
     if (genreIndex >= genres.length) {
         // create playlist
-        console.log(result);
-        console.log(userID);
+        // console.log(result);
+        // console.log(userID);
 
         var createPlaylistOptions = {
             url: 'https://api.spotify.com/v1/users/' + userID + '/playlists',
             body: JSON.stringify({
                 'name': playlistName,
-                'public': false
+                'public': true
             }),
             dataType: 'json',
             headers: {
@@ -316,13 +314,13 @@ function createPlaylist(genres, genreIndex, lengthThresholds, accessToken, userI
 
         request.post(createPlaylistOptions, function (error, response, body) {
             if (!error) {
-                console.log(body);
+                // console.log(body);
                 const playlistID = JSON.parse(body).id;
-                console.log('PLAYLISTID');
-                console.log(playlistID);
+                // console.log('PLAYLISTID');
+                // console.log(playlistID);
                 let populatePlaylistOptions = {
                     url: 'https://api.spotify.com/v1/users/' + userID + '/playlists/' + playlistID + '/tracks',
-                    body: JSON.stringify(result),
+                    body: JSON.stringify(shuffle(result)),
                     dataType: 'json',
                     headers: {
                         'Authorization': 'Bearer ' + accessToken,
@@ -332,7 +330,8 @@ function createPlaylist(genres, genreIndex, lengthThresholds, accessToken, userI
 
                 request.post(populatePlaylistOptions, function (error, response, body) {
                     if (!error) {
-                        console.log(body);
+                        // console.log(body);
+                        finalRes.send(playlistID);
                     } else {
                         console.log(error);
                         finalRes.send(-1);
@@ -345,6 +344,7 @@ function createPlaylist(genres, genreIndex, lengthThresholds, accessToken, userI
         });
 
     } else {
+        // console.log(genres[genreIndex]);
         database.ref('/song-ids/' + genres[genreIndex]).once('value').then(function (snapshot) {
             // console.log(snapshot.val());
             // console.log(Object.values(snapshot.val()));
@@ -366,9 +366,11 @@ function createPlaylist(genres, genreIndex, lengthThresholds, accessToken, userI
                     thisGenreSet.add(id);
                     result.push('spotify:track:' + id);
                     currLength += genreSongs[i]['duration-sec'];
+                    // console.log(currLength);
                 }
                 i = (i + 1) % genreSongs.length;
             }
+            // console.log(result.length);
 
             for (let item of thisGenreSet) resultSet.add(item);
 
