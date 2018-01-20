@@ -18,6 +18,10 @@
     },
     "homepage": "https://github.com/debkbanerji/tunetable#readme",
     "dependencies": {
-        "express": "^4.16.2"
+        "cookie-parser": "^1.4.3",
+        "cookieparser": "^0.1.0",
+        "express": "^4.16.2",
+        "querystring": "^0.2.0",
+        "request": "^2.83.0"
     }
 }

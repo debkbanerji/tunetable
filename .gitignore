@@ -61,3 +61,6 @@ typings/
 
 # intellij based IDEs
 .idea
+
+# credentials
+spotify-credentials.json

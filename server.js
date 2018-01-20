@@ -4,6 +4,8 @@ const path = require('path');
 const http = require('http');
 const bodyParser = require('body-parser');
 
+const cookieParser = require('cookie-parser');
+
 // Get our API routes
 const api = require('./server/routes/api');
 
@@ -17,7 +19,7 @@ app.set('port', port);
 console.log("Node server running on port " + port);
 
 // Point static path to 'static' folder
-app.use(express.static(path.join(__dirname, 'static')));
+app.use(express.static(path.join(__dirname, 'static'))).use(cookieParser());
 console.log("Serving static from 'static' folder");
 
 app.use(function (error, req, res, next) {
