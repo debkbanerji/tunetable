@@ -301,21 +301,47 @@ function createPlaylist(genres, genreIndex, lengthThresholds, accessToken, userI
         console.log(result);
         console.log(userID);
 
-        var authOptions1 = {
+        var createPlaylistOptions = {
             url: 'https://api.spotify.com/v1/users/' + userID + '/playlists',
             body: JSON.stringify({
                 'name': playlistName,
                 'public': false
             }),
-            dataType:'json',
+            dataType: 'json',
             headers: {
                 'Authorization': 'Bearer ' + accessToken,
                 'Content-Type': 'application/json',
             }
         };
 
-        request.post(authOptions1, function(error, response, body) {
-            console.log(body);
+        request.post(createPlaylistOptions, function (error, response, body) {
+            if (!error) {
+                console.log(body);
+                const playlistID = JSON.parse(body).id;
+                console.log('PLAYLISTID');
+                console.log(playlistID);
+                let populatePlaylistOptions = {
+                    url: 'https://api.spotify.com/v1/users/' + userID + '/playlists/' + playlistID + '/tracks',
+                    body: JSON.stringify(result),
+                    dataType: 'json',
+                    headers: {
+                        'Authorization': 'Bearer ' + accessToken,
+                        'Content-Type': 'application/json',
+                    }
+                };
+
+                request.post(populatePlaylistOptions, function (error, response, body) {
+                    if (!error) {
+                        console.log(body);
+                    } else {
+                        console.log(error);
+                        finalRes.send(-1);
+                    }
+                });
+            } else {
+                console.log(error);
+                finalRes.send(-1);
+            }
         });
 
     } else {
@@ -338,7 +364,7 @@ function createPlaylist(genres, genreIndex, lengthThresholds, accessToken, userI
                 const id = genreSongs[i].id;
                 if (!newSongsAvailable || !resultSet.has(id)) {
                     thisGenreSet.add(id);
-                    result.push(id);
+                    result.push('spotify:track:' + id);
                     currLength += genreSongs[i]['duration-sec'];
                 }
                 i = (i + 1) % genreSongs.length;
