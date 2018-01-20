@@ -84,7 +84,6 @@ router.get('/auth-callback', function (req, res) {
             json: true
         };
 
-        console.log('HERE');
         request.post(authOptions, function (error, response, body) {
             if (!error && response.statusCode === 200) {
 
@@ -99,7 +98,7 @@ router.get('/auth-callback', function (req, res) {
 
                 // use the access token to access the Spotify Web API
                 request.get(options, function (error, response, body) {
-                    console.log(body);
+                    // console.log(body);
                 });
 
                 // we can also pass the token to the browser to make requests from there
@@ -145,36 +144,30 @@ router.get('/refresh_token', function (req, res) {
 
 // other logic
 
-router.get('/add-album/:id', function (req, finalRes) {
+router.post('/add-album/:id', function (req, finalRes) {
     const albumId = req.params.id;
     console.log(req.params);
-    //
-    // request.post(
-    //     'http://www.yoursite.com/formpage',
-    //     { json: { key: 'value' } },
-    //     function (error, response, body) {
-    //         if (!error && response.statusCode === 200) {
-    //             console.log(body)
-    //         }
-    //     }
-    // );
+    console.log(req.body);
 
     const requestURL = 'https://api.spotify.com/v1/albums/' + albumId;
 
-    var options = {
+    request({
         url: requestURL,
-        headers: {
-            'User-Agent': 'request'
+        method: 'GET',
+        auth: {
+            'bearer': req.body.access_token
         }
-    };
-
-    request.get(options,
-        function (error, response, body) {
+    }, function (error, response, body) {
         if (!error && response.statusCode === 200) {
-            console.log(body)
+            const albumInfo = JSON.parse(body);
+
+            console.log(albumInfo);
+            console.log(albumInfo.genres);
+
+            finalRes.send(albumInfo.name);
         } else {
-            // console.log(error);
-            // console.log(response);
+            console.log(error);
+            console.log(response);
         }
     });
 });

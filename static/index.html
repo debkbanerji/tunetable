@@ -146,9 +146,10 @@
                 });
             }, false);
             document.getElementById('get-album-info').addEventListener('click', function () {
-                const albumId = document.getElementById('album-id-to-scrape').value;
+                const albumIdSplit = document.getElementById('album-id-to-scrape').value.split('/');
                 $.ajax({
-                    url: '/api/add-album/' + albumId,
+                    type: "POST",
+                    url: '/api/add-album/' + albumIdSplit[albumIdSplit.length - 1],
                     data: {
                         'access_token': access_token
                     }
