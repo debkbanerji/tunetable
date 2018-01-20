@@ -297,7 +297,7 @@
                         user_id = response.id;
                         $('#login').hide();
                         $('#loggedin').show();
-                        refreshSliders(false);
+                        refreshSliders(true);
                         addGenerateButtonListener();
                     }
                 });
@@ -356,6 +356,9 @@
                         const genreList = response;
                         const sliderCollection = document.getElementById('slider-collection');
 //                        console.log(sliderCollection);
+                        while (sliderCollection.firstChild) {
+                            sliderCollection.removeChild(sliderCollection.firstChild);
+                        }
                         for (let i = 0; i < genreList.length; i++) {
                             const genre = genreList[i];
                             if (!useCommonGenres || commonGenres.includes(genre)) {
