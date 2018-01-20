@@ -1,0 +1,23 @@
+{
+    "name": "tunetable",
+    "version": "1.0.0",
+    "description": "Generating music playlists based on journey length",
+    "main": "server.js",
+    "scripts": {
+        "start": "node server.js ",
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/debkbanerji/tunetable.git"
+    },
+    "author": "Deb Banerji",
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/debkbanerji/tunetable/issues"
+    },
+    "homepage": "https://github.com/debkbanerji/tunetable#readme",
+    "dependencies": {
+        "express": "^4.16.2"
+    }
+}
