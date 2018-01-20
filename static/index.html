@@ -170,7 +170,6 @@
 
             <div class="text-center container-fluid">
                 <button id="btn-generate" type="button" class="button text-center">Generate!</button>
-
             </div>
 
 
@@ -258,6 +257,7 @@
                         $('#login').hide();
                         $('#loggedin').show();
                         refreshSliders(true);
+                        addGenerateButtonListener();
                     }
                 });
             } else {
@@ -323,7 +323,7 @@
 //                            const genre = genreList[i].replace(/[^\w\s]/gi, '').replace(/\s/, '');
                                 let container = `
                                 <div class="col-md-6 col-xs-6 slider-padding slider-text">
-                                    <input type="range" min="1" max="100" value="0" class="slider" title="VARIABLE_GENRE" id="VARIABLE_GENRE">
+                                    <input type="range" min="0" max="100" value="0" class="slider" title="VARIABLE_GENRE" id="VARIABLE_GENRE">
                                     <br>
                                     <span>TITLE_CASE_GENRE</span>
                                 </div>
@@ -331,12 +331,39 @@
                                 if (useCommonGenres) {
                                     container = container.replace('col-md-2 ', '');
                                 }
-                                console.log(container);
                                 sliderCollection.appendChild(createElementFromHTML(container));
                             }
                         }
                     }
                 });
+            }
+
+            function addGenerateButtonListener() {
+                document.getElementById('btn-generate').addEventListener('click', function () {
+                    let genre_breakdown = {};
+                    const sliders = document.getElementsByClassName('slider');
+                    let nonzeroValue = false;
+                    for (let i = 0; i < sliders.length; i++) {
+                        if (sliders[i].value > 0) {
+                            nonzeroValue = true;
+                            genre_breakdown[sliders[i].id] = sliders[i].value;
+                        }
+                    }
+                    if (nonzeroValue) {
+                        $.ajax({
+                            type: "POST",
+                            url: '/api/create-playlist/',
+                            data: {
+                                'access_token': access_token,
+                                'album_name': 'test name',
+                                'target_length_mins': 120,
+                                'genre_breakdown': JSON.stringify(genre_breakdown)
+                            }
+                        }).done(function (data) {
+                            console.log(data);
+                        });
+                    }
+                }, false);
             }
         }
     })();

@@ -231,6 +231,32 @@ router.get('/genre-list',function (req, res) {
     });
 });
 
+router.post('/create-playlist',function (req, finalRes) {
+    // database.ref('/genre-directory').once('value').then(function(snapshot) {
+    //     const genreList = Object.keys(snapshot.val());
+    //     res.send(genreList);
+    // });
+    const accessToken = req.body.access_token;
+    const targetLengthSec = req.body.target_length_mins * 60;
+    const genreBreakdown = JSON.parse(req.body.genre_breakdown);
+    console.log(req.body);
+    console.log(genreBreakdown);
+    const genres = Object.keys(genreBreakdown);
+
+    const result = [];
+    const resultSet = new Set();
+
+    for (let i = 0; i < genres.length; i++) {
+        const genre = genres[i];
+        genreBreakdown[genre] = Number(genreBreakdown[genre]);
+        if (genreBreakdown[genre] === 0) {
+            delete genreBreakdown[genre];
+        }
+    }
+
+    console.log(genreBreakdown);
+});
+
 console.log('Set express router');
 
 console.log('Using body parser');
