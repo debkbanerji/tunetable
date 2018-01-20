@@ -30,6 +30,7 @@
 
         .title-img {
             height: 5vh;
+            cursor: pointer;
         }
 
         .page {
@@ -153,10 +154,12 @@
 <body class="page">
 <div class="container">
     <div class="container-fluid text-center">
-        <img class="title-img"
+        <a href="index.html">
+            <img class="title-img"
              src="assets/png/main-text.png"
              alt="razor-free-font"
              border="0">
+        </a>
     </div>
     <!--<h1 class="header text-center">TuneTable</h1>-->
     <!--<div class="container-fluid text-center title-img"><img src="assets/png/logo2.png">-->
@@ -205,6 +208,8 @@
         document.getElementById('playlist-container').appendChild(createElementFromHTML(playlistTemplate));
 
 
+//        TODO: Playlist name
+        
     })();
 </script>
 
