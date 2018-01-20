@@ -1,10 +1,13 @@
 <!doctype html>
 <html>
 <head>
-    <title>Example of the Authorization Code flow with Spotify</title>
+    <title>TurnTable</title>
     <!--Import Bootstrap-->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
           integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+    <link href="https://fonts.googleapis.com/css?family=VT323" rel="stylesheet">
+
     <style type="text/css">
         #login, #loggedin {
             display: none;
@@ -22,19 +25,90 @@
             color: white;
         }
 
+        .title-img {
+            width: 100%;
+        }
+
         .page {
             background-color: #101427;
             color: white;
         }
 
         .container-fluid {
-            padding-top: 30px;
-            padding-bottom: 30px;
+        padding: 40px;
         }
+
 
         .slidecontainer {
             width: 100%;
+            padding: 30px;
         }
+
+        .slider-text {
+             text-shadow: 0 0 5px #FF0000, 0 0 7px #0000FF;
+            font-size: 40px;
+            font-family: 'VT323' , monospace;
+        }
+
+        .slider-padding {
+            padding: 30px;
+        }
+
+        .slider {
+    -webkit-appearance: none;
+    width: 100%;
+    height: 15px;
+    border-radius: 5px;
+    background: none;
+    outline: none;
+    opacity: 0.7;
+    -webkit-transition: .2s;
+    transition: opacity .5s;
+}
+
+.slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: none;
+    cursor: pointer;
+}
+
+.slider::-moz-range-thumb {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    border-color: black;
+    background: url('assets/png/sliderdial.png');
+    text-shadow: 2px 2px 5px red;
+    cursor: pointer;
+}
+
+    .button {
+        border-color: gray;
+        background-color: #101427;
+        border: solid;
+        border-radius: 20px;
+        color: white;
+        text-align: center;
+        padding: 15px 30px;
+        font-size: 2.0em;
+        -webkit-transition-duration: 0.3s; /* Safari */
+        transition-duration: 0.3s;
+        font-family: 'VT323', monospace;
+        text-shadow: 0 0 5px #FF0000, 0 0 7px #0000FF;
+
+    }
+
+    .button:hover {
+        background-color: white;
+        color: ;
+        font-size: 2.3em;
+        text-shadow: 0 0 8px #FF0000, 0 0 10px #0000FF;
+
+    }
 
     </style>
 </head>
@@ -42,15 +116,17 @@
 <body class="page">
 <div class="container">
     <div id="login">
-        <h1>This is an example of the Authorization Code flow</h1>
-        <a href="/api/login" class="btn btn-primary">Log in with Spotify</a>
+        <h1>Please Login to your Spotify Account</h1>
+        <div class="container-fluid"><a href="/api/login" class="text-center btn btn-primary">Log in with Spotify</a></div>
     </div>
     <div id="loggedin">
         <div id="user-profile">
         </div>
         <div id="oauth">
         </div>
-        <button class="btn btn-default" id="obtain-new-token">Obtain new token using the refresh token</button>
+        <button data-toggle="collapse" data-target="#collapse-div">Collapsible</button>
+        <div class="collapse" id="collapse-div">
+            <button class=" btn btn-default" id="obtain-new-token">Obtain new token using the refresh token</button></div>
         <br>
         <input type="text" title="album-id" id="album-id-to-scrape">
         <br>
@@ -62,25 +138,35 @@
     <div class="page">
 
 
-        <div class="container-fluid text-center"><a href="#"><img
+        <div class="container-fluid text-center"><img class="title-img"
                 src="https://fontmeme.com/permalink/180120/80336b3832e6dcf080761ea73258331d.png" alt="razor-free-font"
-                border="0"></a></div>
+                border="0"></div>
         <!--<h1 class="header text-center">TuneTable</h1>-->
-        <div class="container-fluid text-center"><img src="assets/png/logo2.png"></div>
+        <div class="container-fluid text-center title-img"><img src="assets/png/logo2.png"></div>
 
-        <h2 class="text-center">Hey {{display_name}}! Please set the sliders below</h2>
+        <h2 class="text-center slider-text">Get Tunin'</h2>
+
+        <!--
         <div class="media">
             <div class="pull-left">
                 <img class="media-object" width="150" src="{{images.0.url}}"/>
             </div>
+            -->
 
             <!--<div class="text-center slidecontainer container-fluid">-->
             <!--<input type="range" min="1" max="100" value="50" class="slider" id="RockSlider">-->
             <!--</div>-->
 
-            <div class="row" id="slider-collection">
+            <div class=" text-center row slidecontainer container-fluid" id="slider-collection">
                 <!--Sliders-->
+
             </div>
+
+            <div class="text-center container-fluid">
+                <button id="btn-generate" type="button" class="button text-center">Generate!</button>
+
+            </div>
+
 
             <!-- <div class="media-body">
                  <dl class="dl-horizontal">
@@ -105,7 +191,7 @@
 </script>
 
 <script id="oauth-template" type="text/x-handlebars-template">
-
+    <!--
     <h2>oAuth info</h2>
     <dl class="dl-horizontal">
         <dt>Access token</dt>
@@ -113,7 +199,7 @@
         <dt>Refresh token</dt>
         <dd class="text-overflow">{{refresh_token}}</dd>
     </dl>
-
+    -->
 </script>
 
 <script src="//cdnjs.cloudflare.com/ajax/libs/handlebars.js/2.0.0-alpha.1/handlebars.min.js"></script>
@@ -230,7 +316,7 @@
                                 const titleCaseGenre = toTitleCase(genre);
 //                            const genre = genreList[i].replace(/[^\w\s]/gi, '').replace(/\s/, '');
                                 let container = `
-                                <div class="col-md-2 col-sm-3 col-xs-6">
+                                <div class="col-md-6 col-xs-6 slider-padding slider-text">
                                     <input type="range" min="1" max="100" value="0" class="slider" title="VARIABLE_GENRE" id="VARIABLE_GENRE">
                                     <br>
                                     <span>TITLE_CASE_GENRE</span>
