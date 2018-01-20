@@ -178,7 +178,7 @@
 
 
         <div class="container-fluid text-center"><img class="title-img"
-                                                      src="https://fontmeme.com/permalink/180120/80336b3832e6dcf080761ea73258331d.png"
+                                                      src="assets/png/main-text.png"
                                                       alt="razor-free-font"
                                                       border="0"></div>
         <!--<h1 class="header text-center">TuneTable</h1>-->
@@ -395,7 +395,7 @@
                     const playlistName = document.getElementById('playlist-name').value;
                     if (nonzeroValue && playlistName && playlistName.length > 0) {
                         document.getElementById('playlist-name').value = null;
-                        console.log(playlistName);
+//                        console.log(playlistName);
                         $.ajax({
                             type: "POST",
                             url: '/api/create-playlist/',
@@ -408,6 +408,10 @@
                             }
                         }).done(function (data) {
                             console.log(data);
+                            if (data !== -1) {
+                                console.log('redirecting');
+                                window.location = "/view-playlist.html?playlist=" + data + '&user=' + user_id;
+                            }
                         });
                     }
                 }, false);

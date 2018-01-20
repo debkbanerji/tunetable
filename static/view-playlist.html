@@ -1,0 +1,208 @@
+<!doctype html>
+<html>
+<head>
+    <title>TuneTable</title>
+    <!--Import Bootstrap-->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+    <link href="https://fonts.googleapis.com/css?family=VT323" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Dosis" rel="stylesheet">
+
+    <link rel="icon" type="image/x-icon" href="assets/ico/fav.ico?v=2">
+
+    <style type="text/css">
+        #login, #loggedin {
+            display: none;
+        }
+
+        .text-overflow {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            width: 500px;
+        }
+
+        .header {
+            font-size: 4.5rem;
+            color: white;
+        }
+
+        .title-img {
+            height: 5vh;
+        }
+
+        .page {
+            background-color: #101427;
+            color: white;
+        }
+
+        .container-fluid {
+            padding: 40px;
+        }
+
+        .slidecontainer {
+            width: 100%;
+            padding: 30px;
+            background-color: none;
+        }
+
+        .slider-text {
+            text-shadow: 0 0 5px #FF0000, 0 0 7px #0000FF;
+            font-size: 2.0rem;
+            font-family: 'VT323', monospace;
+        }
+
+        .slider-padding {
+            padding: 30px;
+        }
+
+        .slider {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 10px;
+            border-radius: 2px;
+            background-color: cyan;
+            background: linear-gradient(to right, black, #402037);
+
+            outline: white;
+            opacity: 3.0;
+            -webkit-transition: .2s;
+            transition: opacity .5s;
+        }
+
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            -webkit-transition: .2s;
+            transition: opacity .5s;
+            background: url('assets/png/sliderdial.png');
+            cursor: pointer;
+        }
+
+        .slider::-moz-range-thumb {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            border-width: thin;
+            border-color: cyan;
+            background: url('assets/png/sliderdial.png');
+            cursor: pointer;
+            -webkit-transition: .2s;
+            transition: opacity .5s;
+        }
+
+        .button {
+            border-color: gray;
+            background-color: #101427;
+            border: solid;
+            border-radius: 20px;
+            color: white;
+            text-align: center;
+            padding: 15px 30px;
+            font-size: 2.0em;
+            -webkit-transition-duration: 0.3s; /* Safari */
+            transition-duration: 0.3s;
+            font-family: 'VT323', monospace;
+            text-shadow: 0 0 5px #FF0000, 0 0 7px #0000FF;
+
+        }
+
+        .button:hover {
+            background-color: white;
+            color:;
+            font-size: 2.3em;
+            text-shadow: 0 0 8px #FF0000, 0 0 10px #0000FF;
+
+        }
+
+        .form-style-1 {
+            padding: 30px 30px 15px 30px;
+            text-align: center;
+        }
+
+        .form-style-1 input[type=text] {
+            font-family: font-family: 'Dosis', sans-serif;
+            font-size: 25px;
+            color: #6DCBDA;
+            background: transparent;
+            border: none;
+            border-bottom: 2px dashed #3B318F;
+            width: 275px;
+            outline: none;
+            padding: 0px 0px 0px 0px;
+            text-align: center;
+        }
+
+        .form-style-1 label > span {
+            display: inline-block;
+            width: 200px;
+            font-size: 25px;
+            color: #ffff;
+        }
+
+        #btn-generate {
+            cursor: pointer
+        }
+
+    </style>
+</head>
+
+<body class="page">
+<div class="container">
+    <div class="container-fluid text-center">
+        <img class="title-img"
+             src="assets/png/main-text.png"
+             alt="razor-free-font"
+             border="0">
+    </div>
+    <!--<h1 class="header text-center">TuneTable</h1>-->
+    <!--<div class="container-fluid text-center title-img"><img src="assets/png/logo2.png">-->
+    <div id="playlist-container">
+        <!--<iframe src="https://open.spotify.com/embed?uri=spotify:user:spotify:playlist:3rgsDhGHZxZ9sB9DQWQfuf"-->
+                <!--width="300" height="380" frameborder="0" allowtransparency="true"></iframe>-->
+    </div>
+</div>
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/handlebars.js/2.0.0-alpha.1/handlebars.min.js"></script>
+<script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+<script>
+    (function () {
+        console.log('loaded');
+
+        function createElementFromHTML(htmlString) {
+            let div = document.createElement('div');
+            div.innerHTML = htmlString.trim();
+
+            // Change this to div.childNodes to support multiple top-level nodes
+            return div.firstChild;
+        }
+
+        function getQueryVariable(variable)
+        {
+            let query = window.location.search.substring(1);
+            let vars = query.split("&");
+            for (let i=0;i<vars.length;i++) {
+                let pair = vars[i].split("=");
+                if(pair[0] === variable){return pair[1];}
+            }
+            return(false);
+        }
+
+        let playlistTemplate = `
+        <iframe src="https://open.spotify.com/embed?uri=spotify:user:USER_ID:playlist:PLAYLIST_ID"
+                width="1000" height="500" frameborder="0" allowtransparency="true"></iframe>
+`;
+        playlistTemplate = playlistTemplate
+            .replace('PLAYLIST_ID', getQueryVariable('playlist'))
+            .replace('USER_ID', getQueryVariable('user'));
+        document.getElementById('playlist-container').appendChild(createElementFromHTML(playlistTemplate));
+
+
+    })();
+</script>
+
+</body>
+</html>
