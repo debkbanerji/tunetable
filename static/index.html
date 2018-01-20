@@ -40,7 +40,9 @@
         .container-fluid {
             padding: 40px;
         }
-
+        .container-fluid-landing{
+          text-align: center;
+        }
         .slidecontainer {
             width: 100%;
             padding: 30px;
@@ -154,8 +156,13 @@
 <body class="page">
 <div class="container">
     <div id="login">
-        <h1>Please Login to your Spotify Account</h1>
-        <div class="container-fluid"><a href="/api/login" class="text-center btn btn-primary">Log in with Spotify</a>
+      <div class="container-fluid text-center"><img class="title-img"
+                                                    src="assets/png/main-text.png"
+                                                    alt="razor-free-font"
+                                                    border="0"></div>
+      <div class="container-fluid text-center title-img"><img src="assets/png/logo.png"></div>
+
+        <div class="container-fluid-landing"><a href="/api/login" class="text-center btn btn-primary">Log in with Spotify</a>
         </div>
     </div>
     <div id="loggedin">
@@ -178,10 +185,7 @@
     <div class="page">
 
 
-        <div class="container-fluid text-center"><img class="title-img"
-                                                      src="assets/png/main-text.png"
-                                                      alt="razor-free-font"
-                                                      border="0"></div>
+        <div class="container-fluid text-center"><img class="title-img"  src="assets/png/main-text.png"  alt="razor-free-font" border="0"></div>
         <!--<h1 class="header text-center">TuneTable</h1>-->
         <div class="container-fluid text-center title-img"><img src="assets/png/logo.png"></div>
 
