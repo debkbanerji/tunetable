@@ -146,8 +146,8 @@ router.get('/refresh_token', function (req, res) {
 
 router.post('/add-album/:id', function (req, finalRes) {
     const albumId = req.params.id;
-    console.log(req.params);
-    console.log(req.body);
+    // console.log(req.params);
+    // console.log(req.body);
 
     const requestURL = 'https://api.spotify.com/v1/albums/' + albumId;
 
@@ -161,16 +161,53 @@ router.post('/add-album/:id', function (req, finalRes) {
         if (!error && response.statusCode === 200) {
             const albumInfo = JSON.parse(body);
 
-            console.log(albumInfo);
-            console.log(albumInfo.genres);
+            // console.log(albumInfo);
+            const artistID = albumInfo.artists[0].id;
 
-            finalRes.send(albumInfo.name);
+            request({
+                url: 'https://api.spotify.com/v1/artists/' + artistID,
+                method: 'GET',
+                auth: {
+                    'bearer': req.body.access_token
+                }
+            }, function (error, response, body) {
+                if (!error && response.statusCode === 200) {
+                    const artistInfo = JSON.parse(body);
+                    // console.log(artistInfo);
+                    const genres = artistInfo.genres;
+
+                    addToDatabase(albumInfo, genres);
+
+                    finalRes.send(albumInfo.name);
+                } else {
+                    console.log(error);
+                    console.log(response);
+
+                    finalRes.send('Invalid album link');
+                }
+            });
         } else {
             console.log(error);
             console.log(response);
+
+            finalRes.send('Invalid album link');
         }
     });
 });
+
+addToDatabase = function (album, genres) {
+    console.log('GENRESDATA');
+    console.log(genres);
+    const tracks = album.tracks.items;
+    // console.log('TRACKDATA');
+    // console.log(tracks);
+    const trackIDs = [];
+    for (let i = 0; i < tracks.length; i++) {
+        trackIDs.push(tracks[i].id);
+    }
+    console.log('TRACKIDS');
+    console.log(trackIDs)
+};
 
 console.log('Set express router');
 
