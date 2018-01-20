@@ -32,7 +32,8 @@
 </div>
 
 <script id="user-profile-template" type="text/x-handlebars-template">
-    <h1>Logged in as {{display_name}}</h1>
+    <h1>Try out!</h1>
+    <h2>Logged in as {{display_name}}</h2>
     <div class="media">
         <div class="pull-left">
             <img class="media-object" width="150" src="{{images.0.url}}" />
@@ -63,6 +64,8 @@
 <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
 <script>
     (function() {
+        var authResponse;
+
         /**
          * Obtains parameters from the hash of the URL
          * @return Object
@@ -102,6 +105,8 @@
                     },
                     success: function(response) {
                         userProfilePlaceholder.innerHTML = userProfileTemplate(response);
+                        console.log(response);
+                        authResponse = response;
                         $('#login').hide();
                         $('#loggedin').show();
                     }
