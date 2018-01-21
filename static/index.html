@@ -6,6 +6,12 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
           integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 
+    <meta property="og:title" content="TuneTable"/>
+    <meta property="og:description"
+          content="Intelligently generating music playlists based on journey length and user preferences"/>
+    <meta property="og:image" content="https://tunetable.debkbanerji.com/assets/png/logo.png"/>
+
+
     <link href="https://fonts.googleapis.com/css?family=VT323" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Dosis" rel="stylesheet">
 
@@ -287,7 +293,8 @@
             <form class="form-style-1" action="" id="submit-album-container">
                 <br>
                 <label for="album-id-to-scrape">
-                    <span>Album Link: </span><input type="text" id="album-id-to-scrape" placeholder="Enter Spotify Link"/>
+                    <span>Album Link: </span><input type="text" id="album-id-to-scrape"
+                                                    placeholder="Enter Spotify Link"/>
                 </label>
                 <button class="fancy-button" id="get-album-info">Submit</button>
             </form>
@@ -508,10 +515,10 @@
                 const submitAlbumContainer = document.getElementById('submit-album-container');
                 const toggleSubmissionButton = document.getElementById('toggle-submit-album-button');
                 if (submitAlbumShown) {
-                    submitAlbumContainer.style.display =  'none';
+                    submitAlbumContainer.style.display = 'none';
                     toggleSubmissionButton.innerHTML = 'Submit Album';
                 } else {
-                    submitAlbumContainer.style.display =  'block';
+                    submitAlbumContainer.style.display = 'block';
                     toggleSubmissionButton.innerHTML = 'Hide';
                 }
             }
