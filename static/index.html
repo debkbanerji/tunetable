@@ -552,15 +552,13 @@
                     minutes = minutes + 60 * hours;
 
                     if (minutes === 0) {
-                        setErrorMessage('Choose a valid duration.')
+                        setErrorMessage('Please Choose a valid duration.');
                     } else if (minutes > 60 * 16) {
-                        setErrorMessage('Plese select a playlist less than 16 hours.')
+                        setErrorMessage('Please select a playlist less than 16 hours.');
                     } else if (!nonzeroValue) {
-                        setErrorMessage('Choose at least one genre.')
-
+                        setErrorMessage('Please Choose at least one genre.');
                     } else if (!playlistName || playlistName.length <= 0) {
-                        setErrorMessage('Enter a valid Playlist Name.')
-
+                        setErrorMessage('Please Enter a valid playlist name.');
                     } else {
                         document.getElementById('playlist-name').value = null;
 //                        console.log(playlistName);
