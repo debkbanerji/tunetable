@@ -102,7 +102,7 @@
             transition: opacity .5s;
         }
 
-        .gen-button {
+        .fancy-button {
             border-color: gray;
             background-color: #101427;
             border: solid;
@@ -115,15 +115,21 @@
             transition-duration: 0.3s;
             font-family: 'VT323', monospace;
             text-shadow: 0 0 5px #FF0000, 0 0 7px #0000FF;
-
+            cursor: pointer
         }
 
-        .gen-button:hover {
+        .fancy-button:hover {
             background-color: white;
             color:;
             font-size: 2.3em;
             text-shadow: 0 0 8px #FF0000, 0 0 10px #0000FF;
+        }
 
+        #advanced-mode-button {
+            border-radius: 0;
+            padding: 1px 15px;
+            font-size: 1.0em;
+            width: 10em;
         }
 
         .form-style-1 {
@@ -159,20 +165,22 @@
             transition-duration: 0.3s;
             border-color: #000000;
         }
-        .error-box{
-          font-family: 'VT323', monospace;
-          color : #AA247B;
+
+        .error-box {
+            font-family: 'VT323', monospace;
+            color: #AA247B;
 
         }
+
         .btn:hover {
             background-color: #ffff;
             color: #000000;
             border-color: #84bd00;
         }
 
-        #btn-generate {
-            cursor: pointer
-        }
+        /*#btn-generate {*/
+        /*cursor: pointer*/
+        /*}*/
 
 
     </style>
@@ -259,16 +267,16 @@
         </form>
 
         <div class="text-center container-fluid">
-            <button id="btn-generate" type="button" class="gen-button text-center">Generate!</button>
+            <button id="btn-generate" type="button" class="fancy-button text-center">Generate!</button>
         </div>
 
-      <p class = "text-center error-box" id="error-message"></p>
+        <p class="text-center error-box" id="error-message"></p>
 
-        <div hidden class="row">
+        <div class="row">
             <div class="col-1">
-                <button type="button">Dev Options</button>
+                <button type="button" id="advanced-mode-button" class="fancy-button text-center">Toggle Advanced Mode</button>
+                <!--<button type="button">Dev Options</button>-->
             </div>
-            <div class="col-11"></div>
         </div>
 
 
@@ -338,6 +346,7 @@
             refresh_token = params.refresh_token,
             error = params.error;
         let user_id;
+        let advancedModeShown = false;
         if (error) {
             alert('There was an error during the authentication');
         } else {
@@ -374,7 +383,7 @@
                             responsive: true
                         });
 
-
+                        addAdvancedModeButtonListener();
                         refreshSliders(true);
                         addGenerateButtonListener();
                     }
@@ -463,6 +472,13 @@
                 document.getElementById('error-message').innerHTML = message;
             }
 
+            function addAdvancedModeButtonListener() {
+                document.getElementById('advanced-mode-button').addEventListener('click', function () {
+                    refreshSliders(advancedModeShown);
+                    advancedModeShown = !advancedModeShown;
+                });
+            }
+
             function addGenerateButtonListener() {
                 document.getElementById('btn-generate').addEventListener('click', function () {
                     let genre_breakdown = {};
@@ -485,16 +501,15 @@
 
                     minutes = minutes + 60 * hours;
 
-                    // TODO: Error handling
                     if (minutes === 0) {
                         setErrorMessage('Choose a valid duration.')
                     } else if (minutes > 60 * 16) {
-                      setErrorMessage('Plese select a playlist less than 16 hours.')
+                        setErrorMessage('Plese select a playlist less than 16 hours.')
                     } else if (!nonzeroValue) {
-                      setErrorMessage('Choose at least one genre.')
+                        setErrorMessage('Choose at least one genre.')
 
                     } else if (!playlistName || playlistName.length <= 0) {
-                      setErrorMessage('Enter a valid Playlist Name.')
+                        setErrorMessage('Enter a valid Playlist Name.')
 
                     } else {
                         document.getElementById('playlist-name').value = null;
