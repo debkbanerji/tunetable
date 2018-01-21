@@ -159,11 +159,15 @@
             transition-duration: 0.3s;
             border-color: #000000;
         }
+        .error-box{
+          font-family: 'VT323', monospace;
+          color : #AA247B;
 
+        }
         .btn:hover {
             background-color: #ffff;
             color: #000000;
-            border-color: #84bd00
+            border-color: #84bd00;
         }
 
         #btn-generate {
@@ -257,7 +261,8 @@
         <div class="text-center container-fluid">
             <button id="btn-generate" type="button" class="gen-button text-center">Generate!</button>
         </div>
-        <p id="error-message"></p>
+
+      <p class = "text-center error-box" id="error-message"></p>
 
         <div hidden class="row">
             <div class="col-1">
@@ -482,12 +487,14 @@
 
                     // TODO: Error handling
                     if (minutes === 0) {
-                        setErrorMessage('Choose a valid duration')
+                        setErrorMessage('Choose a valid duration.')
                     } else if (minutes > 60 * 16) {
-
+                      setErrorMessage('Plese select a playlist less than 16 hours.')
                     } else if (!nonzeroValue) {
+                      setErrorMessage('Choose at least one genre.')
 
                     } else if (!playlistName || playlistName.length <= 0) {
+                      setErrorMessage('Enter a valid Playlist Name.')
 
                     } else {
                         document.getElementById('playlist-name').value = null;
