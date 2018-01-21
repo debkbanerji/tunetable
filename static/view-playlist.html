@@ -148,6 +148,15 @@
             cursor: pointer
         }
 
+        #playlist-container{
+            text-align: center;
+        }
+
+        .spotify-player {
+            margin: 0 auto;
+            align-self: center;
+        }
+
     </style>
 </head>
 
@@ -197,7 +206,7 @@
         }
 
         let playlistTemplate = `
-        <iframe src="https://open.spotify.com/embed?uri=spotify:user:USER_ID:playlist:PLAYLIST_ID"
+        <iframe class="spotify-player" src="https://open.spotify.com/embed?uri=spotify:user:USER_ID:playlist:PLAYLIST_ID"
                 width="PLAYER_WIDTH" height="PLAYER_HEIGHT" frameborder="0" allowtransparency="true"></iframe>
 `;
         playlistTemplate = playlistTemplate
