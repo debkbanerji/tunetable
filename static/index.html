@@ -129,7 +129,27 @@
             border-radius: 0;
             padding: 1px 15px;
             font-size: 1.0em;
-            width: 10em;
+            width: 11em;
+        }
+
+        #toggle-submit-album-button {
+            border-radius: 0;
+            padding: 1px 15px;
+            font-size: 1.0em;
+            width: 8em;
+            margin-left: 10px;
+        }
+
+        #get-album-info {
+            border-radius: 0;
+            padding: 1px 15px;
+            font-size: 1.0em;
+            width: 8em;
+            margin-left: 10px;
+        }
+
+        #submit-album-container {
+            padding: 0;
         }
 
         .form-style-1 {
@@ -211,10 +231,6 @@
             <button hidden class=" btn btn-default" id="obtain-new-token">Obtain new token using the refresh token
             </button>
         </div>
-        <br>
-        <input hidden type="text" title="album-id" id="album-id-to-scrape">
-        <br>
-        <button hidden class="btn btn-default" id="get-album-info">Scrape new album</button>
     </div>
 </div>
 
@@ -229,16 +245,6 @@
 
         <h2 class="text-center slider-text">Get Tunin'</h2>
 
-        <!--
-        <div class="media">
-            <div class="pull-left">
-                <img class="media-object" width="150" src="{{images.0.url}}"/>
-            </div>
-            -->
-
-        <!--<div class="text-center slidecontainer container-fluid">-->
-        <!--<input type="range" min="1" max="100" value="50" class="slider" id="RockSlider">-->
-        <!--</div>-->
 
         <div class=" text-center row slidecontainer container-fluid" id="slider-collection">
             <!--Sliders-->
@@ -252,7 +258,7 @@
         </div>
         </form> -->
 
-        <form class="form-style-1" action="" method="post">
+        <form class="form-style-1" action="">
             <label for="duration">
                 <span>Duration: </span><input type="text" id="duration" name="duration">
                 <!--<span>Duration: </span><input type="time" id="playlist-duration" placeholder="HH:MM"/>-->
@@ -273,11 +279,20 @@
         <p class="text-center error-box" id="error-message"></p>
 
         <div class="row">
-            <div class="col-1">
-                <button type="button" id="advanced-mode-button" class="fancy-button text-center">Toggle Advanced Mode</button>
-                <!--<button type="button">Dev Options</button>-->
-            </div>
+            <button type="button" id="advanced-mode-button" class="fancy-button text-center">Toggle Advanced Mode
+            </button>
+            <button type="button" id="toggle-submit-album-button" class="fancy-button text-center">Submit Album</button>
         </div>
+        <div class="row">
+            <form class="form-style-1" action="" id="submit-album-container">
+                <br>
+                <label for="album-id-to-scrape">
+                    <span>Album Link: </span><input type="text" id="album-id-to-scrape" placeholder="Enter Spotify Link"/>
+                </label>
+                <button class="fancy-button" id="get-album-info">Submit</button>
+            </form>
+        </div>
+        <br>
 
 
         <!-- <div class="media-body">
@@ -347,6 +362,7 @@
             error = params.error;
         let user_id;
         let advancedModeShown = false;
+        let submitAlbumShown = false;
         if (error) {
             alert('There was an error during the authentication');
         } else {
@@ -384,6 +400,9 @@
                         });
 
                         addAdvancedModeButtonListener();
+                        addToggleAlbumSubmissionButtonListener();
+                        addGetAlbumInfoListener();
+                        toggleSubmitAlbumBox();
                         refreshSliders(true);
                         addGenerateButtonListener();
                     }
@@ -407,18 +426,23 @@
                     });
                 });
             }, false);
-            document.getElementById('get-album-info').addEventListener('click', function () {
-                const albumIdSplit = document.getElementById('album-id-to-scrape').value.split('/');
-                $.ajax({
-                    type: "POST",
-                    url: '/api/add-album/' + albumIdSplit[albumIdSplit.length - 1],
-                    data: {
-                        'access_token': access_token
-                    }
-                }).done(function (data) {
-                    console.log(data);
-                });
-            }, false);
+
+            function addGetAlbumInfoListener() {
+                document.getElementById('get-album-info').addEventListener('click', function () {
+                    const albumIdSplit = document.getElementById('album-id-to-scrape').value.split('/');
+                    $.ajax({
+                        type: "POST",
+                        url: '/api/add-album/' + albumIdSplit[albumIdSplit.length - 1],
+                        data: {
+                            'access_token': access_token
+                        }
+                    }).done(function (data) {
+                        console.log(data);
+                        document.getElementById('album-id-to-scrape').value = null;
+                        toggleSubmitAlbumBox();
+                    });
+                }, false);
+            }
 
             function toTitleCase(str) {
                 return str.replace(/\w\S*/g, function (txt) {
@@ -476,6 +500,25 @@
                 document.getElementById('advanced-mode-button').addEventListener('click', function () {
                     refreshSliders(advancedModeShown);
                     advancedModeShown = !advancedModeShown;
+                });
+            }
+
+            function toggleSubmitAlbumBox() {
+                submitAlbumShown = !submitAlbumShown;
+                const submitAlbumContainer = document.getElementById('submit-album-container');
+                const toggleSubmissionButton = document.getElementById('toggle-submit-album-button');
+                if (submitAlbumShown) {
+                    submitAlbumContainer.style.display =  'none';
+                    toggleSubmissionButton.innerHTML = 'Submit Album';
+                } else {
+                    submitAlbumContainer.style.display =  'block';
+                    toggleSubmissionButton.innerHTML = 'Hide';
+                }
+            }
+
+            function addToggleAlbumSubmissionButtonListener() {
+                document.getElementById('toggle-submit-album-button').addEventListener('click', function () {
+                    toggleSubmitAlbumBox();
                 });
             }
 
