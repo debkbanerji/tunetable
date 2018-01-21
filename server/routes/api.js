@@ -372,7 +372,7 @@ function createPlaylist(genres, genreIndex, lengthThresholds, accessToken, userI
                     thisGenreSet.add(id);
                     result.push('spotify:track:' + id);
                     currLength += genreSongs[i]['duration-sec'];
-                    console.log(currLength);
+                    // console.log(currLength);
                 }
                 i = (i + 1) % genreSongs.length;
             }
