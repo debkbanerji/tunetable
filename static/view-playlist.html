@@ -42,10 +42,10 @@
             padding: 40px;
         }
 
-        .slidecontainer {
+        .slider-container {
             width: 100%;
             padding: 30px;
-            background-color: none;
+            /*background-color: none;*/
         }
 
         .slider-text {
@@ -113,7 +113,7 @@
 
         .button:hover {
             background-color: white;
-            color:;
+            /*color:;*/
             font-size: 2.3em;
             text-shadow: 0 0 8px #FF0000, 0 0 10px #0000FF;
 
@@ -125,7 +125,7 @@
         }
 
         .form-style-1 input[type=text] {
-            font-family: font-family: 'Dosis', sans-serif;
+            font-family: 'Dosis', sans-serif;
             font-size: 25px;
             color: #6DCBDA;
             background: transparent;
@@ -213,14 +213,12 @@
             .replace('PLAYLIST_ID', getQueryVariable('playlistId'))
             .replace('USER_ID', getQueryVariable('user'));
         const playerWidth = $(window).width() * 0.75;
-        const playerHeight = $(window).width() * 0.45;
+        const playerHeight = $(window).height() * 0.75;
         playlistTemplate = playlistTemplate.replace('PLAYER_WIDTH', playerWidth.toString());
         playlistTemplate = playlistTemplate.replace('PLAYER_HEIGHT', playerHeight.toString());
         document.getElementById('playlist-container').appendChild(createElementFromHTML(playlistTemplate));
-        document.getElementById('created-message').innerHTML = 'Successfully created \''
-            + decodeURIComponent(getQueryVariable('playlistName')) + '\''
-
-//        TODO: Playlist name
+        document.getElementById('created-message').innerHTML = 'Successfully saved \''
+            + decodeURIComponent(getQueryVariable('playlistName')) + '\' to Spotify'
 
     })();
 </script>

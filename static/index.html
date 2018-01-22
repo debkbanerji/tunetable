@@ -8,7 +8,7 @@
 
     <meta property="og:title" content="TuneTable"/>
     <meta property="og:description"
-          content="Intelligently generating music playlists based on journey length and user preferences"/>
+          content="Intelligently generated playlists based on journey length and user preferences"/>
     <meta property="og:image" content="https://tunetable.debkbanerji.com/assets/png/logo.png"/>
 
 
@@ -38,8 +38,20 @@
         }
 
         .title-img {
+            width: 70%;
+            /*height: 100%;*/
+            display: inline-block;
+        }
+
+        .title-img-landing {
             width: 100%;
-            height: 100%;
+            /*height: 100%;*/
+            display: inline-block;
+        }
+
+        .logo {
+            width: 15%;
+            display: inline-block;
         }
 
         .page {
@@ -55,10 +67,11 @@
             text-align: center;
         }
 
-        .slidecontainer {
+        .slider-container {
             width: 100%;
             padding: 30px;
-            background-color: none;
+            margin: 0;
+            /*background-color: none;*/
         }
 
         .slider-text {
@@ -126,7 +139,7 @@
 
         .fancy-button:hover {
             background-color: white;
-            color:;
+            /*color:;*/
             font-size: 2.3em;
             text-shadow: 0 0 8px #FF0000, 0 0 10px #0000FF;
         }
@@ -208,6 +221,10 @@
         /*cursor: pointer*/
         /*}*/
 
+        .advanced-buttons-row {
+            padding-left: 5vw;
+            width: 90vw;
+        }
 
     </style>
 </head>
@@ -218,41 +235,57 @@
         <div class="container-fluid text-center"><img class="title-img"
                                                       src="assets/png/main-text.png"
                                                       alt="razor-free-font"
-                                                      border="0"></div>
-        <div class="container-fluid text-center title-img"><img src="assets/png/logo.png"></div>
-
+                                                      border="0">
+        </div>
+        <div class="container-fluid text-center title-img-landing">
+            <img src="assets/png/logo.png">
+            <!--</div>-->
+            <!--<div class="container-fluid-landing">-->
+            <!---->
+            <!--</div>-->
+            <!--<div class="container-fluid text-center">-->
+            <!--<img src="assets/png/logo.png" class="logo">-->
+            <!--<img class="title-img" src="assets/png/main-text.png"-->
+            <!--alt="razor-free-font" border="0">-->
+            <!--</div>-->
+            <h2 class="text-center slider-text">Intelligently generated playlists based on journey length and user
+                preferences</h2>
+        </div>
+        <br>
         <div class="container-fluid-landing"><a href="/api/login" class="text-center btn">Log in with <i
                 class="fa fa-spotify" aria-hidden="true"></i>
             Spotify</a>
-
         </div>
     </div>
-    <div id="loggedin">
-        <div id="user-profile">
-        </div>
-        <div id="oauth">
-        </div>
-        <button hidden data-toggle="collapse" data-target="#collapse-div">Collapsible</button>
-        <div class="collapse" id="collapse-div">
-            <button hidden class=" btn btn-default" id="obtain-new-token">Obtain new token using the refresh token
-            </button>
-        </div>
+</div>
+<div id="loggedin">
+    <div id="user-profile">
     </div>
+    <div id="oauth">
+    </div>
+    <button hidden data-toggle="collapse" data-target="#collapse-div">Collapsible</button>
+    <div class="collapse" id="collapse-div">
+        <button hidden class=" btn btn-default" id="obtain-new-token">Obtain new token using the refresh token
+        </button>
+    </div>
+</div>
 </div>
 
 <script id="user-profile-template" type="text/x-handlebars-template">
     <div class="page">
 
-
-        <div class="container-fluid text-center"><img class="title-img" src="assets/png/main-text.png"
-                                                      alt="razor-free-font" border="0"></div>
+        <div class="container-fluid text-center">
+            <img src="assets/png/logo.png" class="logo">
+            <img class="title-img" src="assets/png/main-text.png"
+                 alt="razor-free-font" border="0">
+        </div>
         <!--<h1 class="header text-center">TuneTable</h1>-->
-        <div class="container-fluid text-center title-img"><img src="assets/png/logo.png"></div>
+        <!--<div class="container-fluid text-center title-img"></div>-->
 
         <h2 class="text-center slider-text">Your Ultimate Road Trip Buddy</h2>
 
 
-        <div class=" text-center row slidecontainer container-fluid" id="slider-collection">
+        <div class=" text-center row slider-container container-fluid" id="slider-collection">
             <!--Sliders-->
 
         </div>
@@ -284,7 +317,7 @@
 
         <p class="text-center error-box" id="error-message"></p>
 
-        <div class="row">
+        <div class="row advanced-buttons-row">
             <button type="button" id="advanced-mode-button" class="fancy-button text-center">Toggle Advanced Mode
             </button>
             <button type="button" id="toggle-submit-album-button" class="fancy-button text-center">Submit Album</button>
@@ -479,7 +512,7 @@
                         }
                         for (let i = 0; i < genreList.length; i++) {
                             const genre = genreList[i];
-                            if (!useCommonGenres || commonGenres.includes(genre)) {
+                            if ((!useCommonGenres || commonGenres.includes(genre)) && !genre.match(/christmas/gi)) {
                                 const titleCaseGenre = toTitleCase(genre);
 //                            const genre = genreList[i].replace(/[^\w\s]/gi, '').replace(/\s/, '');
                                 let container = `
