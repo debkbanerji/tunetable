@@ -544,6 +544,7 @@
             }
 
             function toggleSubmitAlbumBox() {
+//                updateTopSongs();
                 submitAlbumShown = !submitAlbumShown;
                 const submitAlbumContainer = document.getElementById('submit-album-container');
                 const toggleSubmissionButton = document.getElementById('toggle-submit-album-button');
@@ -559,6 +560,16 @@
             function addToggleAlbumSubmissionButtonListener() {
                 document.getElementById('toggle-submit-album-button').addEventListener('click', function () {
                     toggleSubmitAlbumBox();
+                });
+            }
+
+            function updateTopSongs() {
+                $.ajax({
+                    type: "POST",
+                    url: '/api/process-top-songs/',
+                    data: {
+                        'access_token': access_token,
+                    }
                 });
             }
 

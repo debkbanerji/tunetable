@@ -68,3 +68,6 @@ firebase-credentials.json
 
 # package lock
 package-lock.json
+
+# Top album list
+/*.csv

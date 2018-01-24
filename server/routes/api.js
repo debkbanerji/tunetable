@@ -181,7 +181,7 @@ router.post('/add-album/:id', function (req, finalRes) {
                     // console.log(artistInfo);
                     const genres = artistInfo.genres;
 
-                    addToDatabase(albumInfo, genres);
+                    addAlbumToDatabase(albumInfo, genres);
 
                     finalRes.send(albumInfo.name);
                 } else {
@@ -200,7 +200,7 @@ router.post('/add-album/:id', function (req, finalRes) {
     });
 });
 
-addToDatabase = function (album, genres) {
+addAlbumToDatabase = function (album, genres) {
     // console.log('GENRESDATA');
     // console.log(genres);
     const tracks = album.tracks.items;
@@ -223,6 +223,103 @@ addToDatabase = function (album, genres) {
             database.ref('song-ids/' + genres[i] + '/' + songData[j].id).set(songData[j]);
         }
     }
+};
+
+addSongToDatabase = function (song_id, duration_ms, genres, callback) {
+    const song = {
+        'id': song_id,
+        'duration-sec': duration_ms / 1000
+    };
+
+
+    for (let i = 0; i < genres.length; i++) {
+        database.ref('genre-directory/' + genres[i]).set(genres[i]);
+        database.ref('song-ids/' + genres[i] + '/' + song.id).set(song).then(callback);
+    }
+};
+
+
+router.post('/process-top-songs/', function (req, res) {
+    const accessToken = req.body.access_token;
+    const topSongsLines = (fs.readFileSync('regional-global-daily-latest.csv', 'utf8')).split('\n');
+    // console.log(topSongsLines);
+    let ids = [];
+    for (let i = 1; i < topSongsLines.length - 2; i++) {
+        const line = topSongsLines[i];
+        const splitLine = line.split(',');
+        const songURLSplit = (splitLine[splitLine.length - 1]).split('/');
+        ids.push(songURLSplit[songURLSplit.length - 1]);
+        // addSong(songURLSplit[songURLSplit.length - 1], accessToken, function (name) {
+        //     console.log('Added ' + name);
+        // })
+    }
+    recursivelyAddSongs(ids, 0, accessToken)
+});
+
+recursivelyAddSongs = function (ids, index, accessToken) {
+
+    console.log('Adding ' + ids[index]);
+    if (index < ids.length) {
+        setTimeout(function () {
+                addSong(ids[index], accessToken, function () {
+                    recursivelyAddSongs(ids, index + 1, accessToken);
+                })
+            }, 1000
+        );
+    }
+};
+
+addSong = function (songId, access_token, callback, errorCallback) {
+    // callback();
+    const requestURL = 'https://api.spotify.com/v1/tracks/' + songId;
+
+    // console.log(songId);
+
+    request({
+        url: requestURL,
+        method: 'GET',
+        auth: {
+            'bearer': access_token
+        }
+    }, function (error, response, body) {
+        if (!error && response.statusCode === 200) {
+            const songInfo = JSON.parse(body);
+
+            // console.log(albumInfo);
+            const artistID = songInfo.album.artists[0].id;
+
+            // console.log('ARTISTID');
+            // console.log(artistID);
+
+            request({
+                url: 'https://api.spotify.com/v1/artists/' + artistID,
+                method: 'GET',
+                auth: {
+                    'bearer': access_token
+                }
+            }, function (error, response, body) {
+                if (!error && response.statusCode === 200) {
+                    const artistInfo = JSON.parse(body);
+                    // console.log(artistInfo);
+                    const genres = artistInfo.genres;
+
+                    addSongToDatabase(songId, songInfo.duration_ms, genres);
+
+                    callback(songInfo.name);
+                } else {
+                    console.log(error);
+                    console.log(response);
+
+                    // errorCallback();
+                }
+            });
+        } else {
+            console.log(error);
+            console.log(response);
+
+            // errorCallback();
+        }
+    });
 };
 
 shuffle = function (a) {
