@@ -207,9 +207,15 @@ addAlbumToDatabase = function (album, genres) {
     // console.log('TRACKDATA');
     // console.log(tracks);
     const songData = [];
+    const numSongsRef = database.ref('num-songs');
+    numSongsRef.transaction(function (current_value) {
+        return (current_value || 0) + tracks.length;
+    });
     for (let i = 0; i < tracks.length; i++) {
+        const randomKey = Math.floor(Math.random() * Number.MAX_SAFE_INTEGER);
         songData.push({
             'id': tracks[i].id,
+            'random-key': randomKey,
             'duration-sec': tracks[i].duration_ms / 1000
         });
     }
@@ -226,11 +232,16 @@ addAlbumToDatabase = function (album, genres) {
 };
 
 addSongToDatabase = function (song_id, duration_ms, genres, callback) {
+    const randomKey = Math.floor(Math.random() * Number.MAX_SAFE_INTEGER);
     const song = {
         'id': song_id,
+        'random-key': randomKey,
         'duration-sec': duration_ms / 1000
     };
-
+    const numSongsRef = database.ref('num-songs');
+    numSongsRef.transaction(function (current_value) {
+        return (current_value || 0) + 1;
+    });
 
     for (let i = 0; i < genres.length; i++) {
         database.ref('genre-directory/' + genres[i]).set(genres[i]);
@@ -264,7 +275,7 @@ recursivelyAddSongs = function (ids, index, accessToken) {
                 addSong(ids[index], accessToken, function () {
                     recursivelyAddSongs(ids, index + 1, accessToken);
                 })
-            }, 1000
+            }, 200
         );
     }
 };
@@ -396,7 +407,7 @@ function createPlaylist(genres, genreIndex, lengthThresholds, accessToken, userI
         // console.log(result);
         // console.log(userID);
 
-        var createPlaylistOptions = {
+        const createPlaylistOptions = {
             url: 'https://api.spotify.com/v1/users/' + userID + '/playlists',
             body: JSON.stringify({
                 'name': playlistName,
@@ -448,38 +459,50 @@ function createPlaylist(genres, genreIndex, lengthThresholds, accessToken, userI
 
     } else {
         // console.log(genres[genreIndex]);
-        database.ref('/song-ids/' + genres[genreIndex]).once('value').then(function (snapshot) {
-            // console.log(snapshot.val());
-            // console.log(Object.values(snapshot.val()));
-            const genreSongs = shuffle(Object.values(snapshot.val()));
-            // console.log(genreSongs);
+        database.ref('num-songs').once('value').then(function (snapshot) {
+            const numSongs = snapshot.val();
+            const startIndex = Math.floor(Math.random() * numSongs);
+            const numSongsToPull = Math.ceil((lengthThresholds[genreIndex] - currLength) / 150);
+            database.ref('/song-ids/' + genres[genreIndex])
+                .orderByChild('random-key')
+                .startAt(startIndex)
+                .limitToFirst(numSongsToPull)
+                .once('value').then(function (snapshot) {
+                // console.log(snapshot.val());
+                // console.log(Object.values(snapshot.val()));
+                const genreSongs = shuffle(Object.values(snapshot.val()));
+                // console.log(genreSongs);
 
-            let newSongsAvailable = false;
-            for (let i = 0; i < genreSongs.length; i++) {
-                newSongsAvailable = newSongsAvailable || (!resultSet.has(genreSongs[i].id));
-            }
+                console.log(genres[genreIndex]);
+                console.log(genreSongs.length);
 
-            let i = 0;
-
-            let thisGenreSet = new Set();
-
-            while (currLength < lengthThresholds[genreIndex]) {
-                const id = genreSongs[i].id;
-                if (!newSongsAvailable || !resultSet.has(id)) {
-                    thisGenreSet.add(id);
-                    result.push('spotify:track:' + id);
-                    currLength += genreSongs[i]['duration-sec'];
-                    // console.log(currLength);
+                let newSongsAvailable = false;
+                for (let i = 0; i < genreSongs.length; i++) {
+                    newSongsAvailable = newSongsAvailable || (!resultSet.has(genreSongs[i].id));
                 }
-                i = (i + 1) % genreSongs.length;
-            }
-            // console.log(result.length);
 
-            for (let item of thisGenreSet) resultSet.add(item);
+                let i = 0;
 
-            // console.log(result.length);
+                let thisGenreSet = new Set();
 
-            createPlaylist(genres, genreIndex + 1, lengthThresholds, accessToken, userID, result, resultSet, currLength, playlistName, finalRes);
+                while (currLength < lengthThresholds[genreIndex]) {
+                    const id = genreSongs[i].id;
+                    if (!newSongsAvailable || !resultSet.has(id)) {
+                        thisGenreSet.add(id);
+                        result.push('spotify:track:' + id);
+                        currLength += genreSongs[i]['duration-sec'];
+                        // console.log(currLength);
+                    }
+                    i = (i + 1) % genreSongs.length;
+                }
+                // console.log(result.length);
+
+                for (let item of thisGenreSet) resultSet.add(item);
+
+                // console.log(result.length);
+
+                createPlaylist(genres, genreIndex + 1, lengthThresholds, accessToken, userID, result, resultSet, currLength, playlistName, finalRes);
+            });
         });
     }
 }
