@@ -149,8 +149,7 @@ router.get('/refresh_token', function (req, res) {
 
 // other logic
 
-router.post('/add-album/:id', function (req, finalRes) {
-    const albumId = req.params.id;
+processAlbum = function (albumId, accessToken) {
     // console.log(req.params);
     // console.log(req.body);
 
@@ -160,7 +159,7 @@ router.post('/add-album/:id', function (req, finalRes) {
         url: requestURL,
         method: 'GET',
         auth: {
-            'bearer': req.body.access_token
+            'bearer': accessToken
         }
     }, function (error, response, body) {
         if (!error && response.statusCode === 200) {
@@ -173,7 +172,7 @@ router.post('/add-album/:id', function (req, finalRes) {
                 url: 'https://api.spotify.com/v1/artists/' + artistID,
                 method: 'GET',
                 auth: {
-                    'bearer': req.body.access_token
+                    'bearer': accessToken
                 }
             }, function (error, response, body) {
                 if (!error && response.statusCode === 200) {
@@ -183,21 +182,27 @@ router.post('/add-album/:id', function (req, finalRes) {
 
                     addAlbumToDatabase(albumInfo, genres);
 
-                    finalRes.send(albumInfo.name);
+                    // finalRes.send(albumInfo.name);
                 } else {
                     console.log(error);
                     console.log(response);
 
-                    finalRes.send('Invalid album link');
+                    // finalRes.send('Invalid album link');
                 }
             });
         } else {
             console.log(error);
             console.log(response);
 
-            finalRes.send('Invalid album link');
+            // finalRes.send('Invalid album link');
         }
     });
+};
+
+router.post('/add-album/:id', function (req, finalRes) {
+    const albumId = req.params.id;
+    const accessToken = req.body.access_token;
+    processAlbum(albumId, accessToken);
 });
 
 addAlbumToDatabase = function (album, genres) {
@@ -473,8 +478,8 @@ function createPlaylist(genres, genreIndex, lengthThresholds, accessToken, userI
                 const genreSongs = shuffle(Object.values(snapshot.val()));
                 // console.log(genreSongs);
 
-                console.log(genres[genreIndex]);
-                console.log(genreSongs.length);
+                // console.log(genres[genreIndex]);
+                // console.log(genreSongs.length);
 
                 let newSongsAvailable = false;
                 for (let i = 0; i < genreSongs.length; i++) {
