@@ -274,13 +274,13 @@ router.post('/process-top-songs/', function (req, res) {
 
 recursivelyAddSongs = function (ids, index, accessToken) {
 
-    console.log('Adding ' + ids[index]);
+    // console.log('Adding ' + ids[index]);
     if (index < ids.length) {
         setTimeout(function () {
                 addSong(ids[index], accessToken, function () {
                     recursivelyAddSongs(ids, index + 1, accessToken);
                 })
-            }, 200
+            }, 1000
         );
     }
 };
@@ -320,6 +320,9 @@ addSong = function (songId, access_token, callback, errorCallback) {
                     const genres = artistInfo.genres;
 
                     addSongToDatabase(songId, songInfo.duration_ms, genres);
+
+                    // ADD WHOLE ALBUM INSTEAD
+                    // processAlbum(songInfo.album.id ,access_token);
 
                     callback(songInfo.name);
                 } else {
