@@ -151,7 +151,7 @@
             width: 11em;
         }
 
-        #toggle-submit-album-button {
+        #toggle-submit-button {
             border-radius: 0;
             padding: 1px 15px;
             font-size: 1.0em;
@@ -159,7 +159,7 @@
             margin-left: 10px;
         }
 
-        #get-album-info {
+        #submit-link {
             border-radius: 0;
             padding: 1px 15px;
             font-size: 1.0em;
@@ -167,7 +167,7 @@
             margin-left: 10px;
         }
 
-        #submit-album-container {
+        #submit-container {
             padding: 0;
         }
 
@@ -239,15 +239,6 @@
         </div>
         <div class="container-fluid text-center title-img-landing">
             <img src="assets/png/logo.png">
-            <!--</div>-->
-            <!--<div class="container-fluid-landing">-->
-            <!---->
-            <!--</div>-->
-            <!--<div class="container-fluid text-center">-->
-            <!--<img src="assets/png/logo.png" class="logo">-->
-            <!--<img class="title-img" src="assets/png/main-text.png"-->
-            <!--alt="razor-free-font" border="0">-->
-            <!--</div>-->
             <h2 class="text-center slider-text">Intelligently generated playlists based on journey length and user
                 preferences</h2>
         </div>
@@ -320,52 +311,23 @@
         <div class="row advanced-buttons-row">
             <button type="button" id="advanced-mode-button" class="fancy-button text-center">Toggle Advanced Mode
             </button>
-            <button type="button" id="toggle-submit-album-button" class="fancy-button text-center">Submit Album</button>
+            <button type="button" id="toggle-submit-button" class="fancy-button text-center">Add Music</button>
         </div>
         <div class="row advanced-buttons-row">
-            <form class="form-style-1" action="" id="submit-album-container">
+            <form class="form-style-1" action="" id="submit-container">
                 <br>
                 <label for="id-to-scrape">
-                    <span>Album Link: </span><input type="text" id="id-to-scrape"
-                                                    placeholder="Enter Spotify Link"/>
+                    <span>Spotify Link: </span><input type="text" id="id-to-scrape"
+                                                    placeholder="Artist/Album/Track Link"/>
                 </label>
-                <button class="fancy-button" id="get-album-info">Submit</button>
+                <button class="fancy-button" id="submit-link">Submit</button>
             </form>
         </div>
         <br>
-
-
-        <!-- <div class="media-body">
-             <dl class="dl-horizontal">
-                 <dt>Display name</dt>
-                 <dd class="clearfix">{{display_name}}</dd>
-                 <dt>Id</dt>
-                 <dd>{{id}}</dd>
-                 <dt>Email</dt>
-                 <dd>{{email}}</dd>
-                 <dt>Spotify URI</dt>
-                 <dd><a href="{{external_urls.spotify}}">{{external_urls.spotify}}</a></dd>
-                 <dt>Link</dt>
-                 <dd><a href="{{href}}">{{href}}</a></dd>
-                 <dt>Profile Image</dt>
-                 <dd class="clearfix"><a href="{{images.0.url}}">{{images.0.url}}</a></dd>
-                 <dt>Country</dt>
-                 <dd>{{country}}</dd>
-             </dl>
-         </div> -->
     </div>
 </script>
 
 <script id="oauth-template" type="text/x-handlebars-template">
-    <!--
-    <h2>oAuth info</h2>
-    <dl class="dl-horizontal">
-        <dt>Access token</dt>
-        <dd class="text-overflow">{{access_token}}</dd>
-        <dt>Refresh token</dt>
-        <dd class="text-overflow">{{refresh_token}}</dd>
-    </dl>
-    -->
 </script>
 
 
@@ -402,7 +364,7 @@
             error = params.error;
         let user_id;
         let advancedModeShown = false;
-        let submitAlbumShown = false;
+        let submitShown = false;
         if (error) {
             alert('There was an error during the authentication');
         } else {
@@ -440,9 +402,9 @@
                         });
 
                         addAdvancedModeButtonListener();
-                        addToggleAlbumSubmissionButtonListener();
-                        addGetAlbumInfoListener();
-                        toggleSubmitAlbumBox();
+                        addToggleSubmissionButtonListener();
+                        addSubmitInfoListener();
+                        toggleSubmitBox();
                         refreshSliders(true);
                         addGenerateButtonListener();
                     }
@@ -452,7 +414,7 @@
                 $('#login').show();
                 $('#loggedin').hide();
             }
-            document.getElementById('obtain-new-token').addEventListener('click', function () {
+            let obtainNewToken = function () {
                 $.ajax({
                     url: '/api/refresh_token',
                     data: {
@@ -465,13 +427,14 @@
                         refresh_token: refresh_token
                     });
                 });
-            }, false);
+            };
+            document.getElementById('obtain-new-token').addEventListener('click', obtainNewToken, false);
 
-            function addGetAlbumInfoListener() {
-                document.getElementById('get-album-info').addEventListener('click', function () {
+            function addSubmitInfoListener() {
+                document.getElementById('submit-link').addEventListener('click', function () {
                     let value = document.getElementById('id-to-scrape').value;
-                    const albumIdSplit = value.split('/');
-                    const id = albumIdSplit[albumIdSplit.length - 1];
+                    const idSplit = value.split('/');
+                    const id = idSplit[idSplit.length - 1];
                     let url;
                     if (value.match(/album/i)) {
                         url = '/api/add-album/' + id;
@@ -488,8 +451,9 @@
                         }
                     }).done(function (data) {
                         console.log(data);
-//                        document.getElementById('id-to-scrape').value = null;
-                        toggleSubmitAlbumBox();
+                        document.getElementById('id-to-scrape').value = null;
+                        obtainNewToken();
+                        toggleSubmitBox();
                     });
                 }, false);
             }
@@ -551,23 +515,22 @@
                 });
             }
 
-            function toggleSubmitAlbumBox() {
-//                updateTopSongs();
-                submitAlbumShown = !submitAlbumShown;
-                const submitAlbumContainer = document.getElementById('submit-album-container');
-                const toggleSubmissionButton = document.getElementById('toggle-submit-album-button');
-                if (submitAlbumShown) {
-                    submitAlbumContainer.style.display = 'none';
-                    toggleSubmissionButton.innerHTML = 'Submit Album';
+            function toggleSubmitBox() {
+                submitShown = !submitShown;
+                const submitContainer = document.getElementById('submit-container');
+                const toggleSubmissionButton = document.getElementById('toggle-submit-button');
+                if (submitShown) {
+                    submitContainer.style.display = 'none';
+                    toggleSubmissionButton.innerHTML = 'Submit';
                 } else {
-                    submitAlbumContainer.style.display = 'block';
+                    submitContainer.style.display = 'block';
                     toggleSubmissionButton.innerHTML = 'Hide';
                 }
             }
 
-            function addToggleAlbumSubmissionButtonListener() {
-                document.getElementById('toggle-submit-album-button').addEventListener('click', function () {
-                    toggleSubmitAlbumBox();
+            function addToggleSubmissionButtonListener() {
+                document.getElementById('toggle-submit-button').addEventListener('click', function () {
+                    toggleSubmitBox();
                 });
             }
 
