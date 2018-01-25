@@ -206,37 +206,6 @@ processArtist = function (artistId, accessToken) {
     });
 };
 
-// processSong = function (songId, accessToken) {
-//     request({
-//         url: 'https://api.spotify.com/v1/tracks/' + songId,
-//         method: 'GET',
-//         auth: {
-//             'bearer': accessToken
-//         }
-//     }, function (error, response, body) {
-//         if (!error && response.statusCode === 200) {
-//             const artistInfo = JSON.parse(body).artists[0];
-//             request({
-//                 url: 'https://api.spotify.com/v1/artists/' + artistInfo.id + '/albums',
-//                 method: 'GET',
-//                 auth: {
-//                     'bearer': accessToken
-//                 }
-//             }, function (error, response, body) {
-//                 if (!error && response.statusCode === 200) {
-//
-//                 } else {
-//                     console.log(error);
-//                     console.log(response);
-//                 }
-//             });
-//         } else {
-//             console.log(error);
-//             console.log(response);
-//         }
-//     });
-// };
-
 router.post('/add-album/:id', function (req, finalRes) {
     const albumId = req.params.id;
     const accessToken = req.body.access_token;
