@@ -44,7 +44,7 @@ let stateKey = 'spotify_auth_state';
 
 router.get('/login', function (req, res) {
 
-    var state = generateRandomString(16);
+    const state = generateRandomString(16);
     res.cookie(stateKey, state);
 
     // your application requests authorization
@@ -65,9 +65,9 @@ router.get('/auth-callback', function (req, res) {
     // your application requests refresh and access tokens
     // after checking the state parameter
 
-    var code = req.query.code || null;
-    var state = req.query.state || null;
-    var storedState = req.cookies ? req.cookies[stateKey] : null;
+    const code = req.query.code || null;
+    const state = req.query.state || null;
+    const storedState = req.cookies ? req.cookies[stateKey] : null;
 
     if (state === null || state !== storedState) {
         res.redirect('/#' +
@@ -76,7 +76,7 @@ router.get('/auth-callback', function (req, res) {
             }));
     } else {
         res.clearCookie(stateKey);
-        var authOptions = {
+        const authOptions = {
             url: 'https://accounts.spotify.com/api/token',
             form: {
                 code: code,
@@ -92,10 +92,10 @@ router.get('/auth-callback', function (req, res) {
         request.post(authOptions, function (error, response, body) {
             if (!error && response.statusCode === 200) {
 
-                var access_token = body.access_token,
+                const access_token = body.access_token,
                     refresh_token = body.refresh_token;
 
-                var options = {
+                const options = {
                     url: 'https://api.spotify.com/v1/me',
                     headers: {'Authorization': 'Bearer ' + access_token},
                     json: true
@@ -126,8 +126,8 @@ router.get('/auth-callback', function (req, res) {
 router.get('/refresh_token', function (req, res) {
 
     // requesting access token from refresh token
-    var refresh_token = req.query.refresh_token;
-    var authOptions = {
+    const refresh_token = req.query.refresh_token;
+    const authOptions = {
         url: 'https://accounts.spotify.com/api/token',
         headers: {'Authorization': 'Basic ' + (new Buffer(spotify_client_id + ':' + spotify_client_secret).toString('base64'))},
         form: {
@@ -139,7 +139,7 @@ router.get('/refresh_token', function (req, res) {
 
     request.post(authOptions, function (error, response, body) {
         if (!error && response.statusCode === 200) {
-            var access_token = body.access_token;
+            const access_token = body.access_token;
             res.send({
                 'access_token': access_token
             });
@@ -147,12 +147,7 @@ router.get('/refresh_token', function (req, res) {
     });
 });
 
-// other logic
-
-router.post('/add-album/:id', function (req, finalRes) {
-    const albumId = req.params.id;
-    // console.log(req.params);
-    // console.log(req.body);
+processAlbum = function (albumId, accessToken) {
 
     const requestURL = 'https://api.spotify.com/v1/albums/' + albumId;
 
@@ -160,105 +155,169 @@ router.post('/add-album/:id', function (req, finalRes) {
         url: requestURL,
         method: 'GET',
         auth: {
-            'bearer': req.body.access_token
+            'bearer': accessToken
         }
     }, function (error, response, body) {
         if (!error && response.statusCode === 200) {
             const albumInfo = JSON.parse(body);
-
-            // console.log(albumInfo);
             const artistID = albumInfo.artists[0].id;
 
             request({
                 url: 'https://api.spotify.com/v1/artists/' + artistID,
                 method: 'GET',
                 auth: {
-                    'bearer': req.body.access_token
+                    'bearer': accessToken
                 }
             }, function (error, response, body) {
                 if (!error && response.statusCode === 200) {
                     const artistInfo = JSON.parse(body);
-                    // console.log(artistInfo);
                     const genres = artistInfo.genres;
 
                     addAlbumToDatabase(albumInfo, genres);
-
-                    finalRes.send(albumInfo.name);
                 } else {
                     console.log(error);
                     console.log(response);
-
-                    finalRes.send('Invalid album link');
                 }
             });
         } else {
             console.log(error);
             console.log(response);
-
-            finalRes.send('Invalid album link');
         }
     });
+};
+
+processArtist = function (artistId, accessToken) {
+    request({
+        url: 'https://api.spotify.com/v1/artists/' + artistId + '/albums',
+        method: 'GET',
+        auth: {
+            'bearer': accessToken
+        }
+    }, function (error, response, body) {
+        if (!error && response.statusCode === 200) {
+            const artistAlbumInfo = JSON.parse(body).items;
+            for (let album of artistAlbumInfo) {
+                processAlbum(album.id, accessToken);
+            }
+        } else {
+            console.log(error);
+            console.log(response);
+        }
+    });
+};
+
+// processSong = function (songId, accessToken) {
+//     request({
+//         url: 'https://api.spotify.com/v1/tracks/' + songId,
+//         method: 'GET',
+//         auth: {
+//             'bearer': accessToken
+//         }
+//     }, function (error, response, body) {
+//         if (!error && response.statusCode === 200) {
+//             const artistInfo = JSON.parse(body).artists[0];
+//             request({
+//                 url: 'https://api.spotify.com/v1/artists/' + artistInfo.id + '/albums',
+//                 method: 'GET',
+//                 auth: {
+//                     'bearer': accessToken
+//                 }
+//             }, function (error, response, body) {
+//                 if (!error && response.statusCode === 200) {
+//
+//                 } else {
+//                     console.log(error);
+//                     console.log(response);
+//                 }
+//             });
+//         } else {
+//             console.log(error);
+//             console.log(response);
+//         }
+//     });
+// };
+
+router.post('/add-album/:id', function (req, finalRes) {
+    const albumId = req.params.id;
+    const accessToken = req.body.access_token;
+    processAlbum(albumId, accessToken);
+});
+
+router.post('/add-artist/:id', function (req, finalRes) {
+    const artistId = req.params.id;
+    const accessToken = req.body.access_token;
+    processArtist(artistId, accessToken);
+});
+
+router.post('/add-song/:id', function (req, finalRes) {
+    const songId = req.params.id;
+    const accessToken = req.body.access_token;
+    addSong(songId, accessToken);
 });
 
 addAlbumToDatabase = function (album, genres) {
-    // console.log('GENRESDATA');
-    // console.log(genres);
     const tracks = album.tracks.items;
-    // console.log('TRACKDATA');
-    // console.log(tracks);
-    const songData = [];
+    // const songData = [];
     for (let i = 0; i < tracks.length; i++) {
-        songData.push({
-            'id': tracks[i].id,
-            'duration-sec': tracks[i].duration_ms / 1000
-        });
+        addSongToDatabase(tracks[i].id, tracks[i].duration_ms, genres, function () {
+            // console.log('added track ' + tracks[i].id);
+        })
     }
-    // console.log('TRACKDATA');
-    // console.log(songData);
 
 
-    for (let i = 0; i < genres.length; i++) {
-        database.ref('genre-directory/' + genres[i]).set(genres[i]);
-        for (let j = 0; j < songData.length; j++) {
-            database.ref('song-ids/' + genres[i] + '/' + songData[j].id).set(songData[j]);
-        }
-    }
+    // for (let i = 0; i < genres.length; i++) {
+    //     database.ref('genre-directory/' + genres[i]).set(genres[i]);
+    //     for (let j = 0; j < songData.length; j++) {
+    //         database.ref('song-ids/' + genres[i] + '/' + songData[j].id).set(songData[j]);
+    //     }
+    // }
 };
 
 addSongToDatabase = function (song_id, duration_ms, genres, callback) {
-    const song = {
-        'id': song_id,
-        'duration-sec': duration_ms / 1000
-    };
+    database.ref('song-ids/' + genres[0] + '/' + song_id).once('value').then(function (snapshot) {
+        if (snapshot.val() === null) {
+            const randomKey = Math.floor(Math.random() * Number.MAX_SAFE_INTEGER);
+            const song = {
+                'id': song_id,
+                'random-key': randomKey,
+                'duration-sec': duration_ms / 1000
+            };
+            const numSongsRef = database.ref('num-songs');
 
+            for (let i = 0; i < genres.length; i++) {
+                database.ref('genre-directory/' + genres[i]).set(genres[i]);
+                database.ref('song-ids/' + genres[i] + '/' + song_id).set(song)
+                    .then(function () {
+                        if (i === 0) {
+                            numSongsRef.transaction(function (current_value) {
+                                return (current_value || 0) + 1;
+                            });
+                        }
+                    })
+                    .then(callback);
+            }
+        }
+    });
 
-    for (let i = 0; i < genres.length; i++) {
-        database.ref('genre-directory/' + genres[i]).set(genres[i]);
-        database.ref('song-ids/' + genres[i] + '/' + song.id).set(song).then(callback);
-    }
 };
 
 
 router.post('/process-top-songs/', function (req, res) {
     const accessToken = req.body.access_token;
     const topSongsLines = (fs.readFileSync('regional-global-daily-latest.csv', 'utf8')).split('\n');
-    // console.log(topSongsLines);
     let ids = [];
     for (let i = 1; i < topSongsLines.length - 2; i++) {
         const line = topSongsLines[i];
         const splitLine = line.split(',');
         const songURLSplit = (splitLine[splitLine.length - 1]).split('/');
         ids.push(songURLSplit[songURLSplit.length - 1]);
-        // addSong(songURLSplit[songURLSplit.length - 1], accessToken, function (name) {
-        //     console.log('Added ' + name);
-        // })
     }
     recursivelyAddSongs(ids, 0, accessToken)
 });
 
 recursivelyAddSongs = function (ids, index, accessToken) {
 
-    console.log('Adding ' + ids[index]);
+    // console.log('Adding ' + ids[index]);
     if (index < ids.length) {
         setTimeout(function () {
                 addSong(ids[index], accessToken, function () {
@@ -270,10 +329,7 @@ recursivelyAddSongs = function (ids, index, accessToken) {
 };
 
 addSong = function (songId, access_token, callback, errorCallback) {
-    // callback();
     const requestURL = 'https://api.spotify.com/v1/tracks/' + songId;
-
-    // console.log(songId);
 
     request({
         url: requestURL,
@@ -284,13 +340,7 @@ addSong = function (songId, access_token, callback, errorCallback) {
     }, function (error, response, body) {
         if (!error && response.statusCode === 200) {
             const songInfo = JSON.parse(body);
-
-            // console.log(albumInfo);
             const artistID = songInfo.album.artists[0].id;
-
-            // console.log('ARTISTID');
-            // console.log(artistID);
-
             request({
                 url: 'https://api.spotify.com/v1/artists/' + artistID,
                 method: 'GET',
@@ -300,17 +350,17 @@ addSong = function (songId, access_token, callback, errorCallback) {
             }, function (error, response, body) {
                 if (!error && response.statusCode === 200) {
                     const artistInfo = JSON.parse(body);
-                    // console.log(artistInfo);
                     const genres = artistInfo.genres;
 
-                    addSongToDatabase(songId, songInfo.duration_ms, genres);
+                    addSongToDatabase(songId, songInfo.duration_ms, genres, function () {
 
-                    callback(songInfo.name);
+                    });
+                    if (callback) {
+                        callback(songInfo.name);
+                    }
                 } else {
                     console.log(error);
                     console.log(response);
-
-                    // errorCallback();
                 }
             });
         } else {
@@ -341,17 +391,11 @@ router.get('/genre-list', function (req, res) {
 });
 
 router.post('/create-playlist', function (req, finalRes) {
-    // database.ref('/genre-directory').once('value').then(function(snapshot) {
-    //     const genreList = Object.keys(snapshot.val());
-    //     res.send(genreList);
-    // });
     const accessToken = req.body.access_token;
     const userID = req.body.user_id;
     const targetLengthSec = req.body.target_length_mins * 60;
     const playlistName = req.body.playlist_name;
     const genreBreakdown = JSON.parse(req.body.genre_breakdown);
-    // console.log(req.body);
-    // console.log(genreBreakdown);
     const genres = Object.keys(genreBreakdown);
 
     for (let i = 0; i < genres.length; i++) {
@@ -361,9 +405,6 @@ router.post('/create-playlist', function (req, finalRes) {
             delete genreBreakdown[genre];
         }
     }
-
-    // console.log(genreBreakdown);
-
     let totalLength = 0;
     for (let i = 0; i < genres.length; i++) {
         const genre = genres[i];
@@ -379,11 +420,6 @@ router.post('/create-playlist', function (req, finalRes) {
             lengthThresholds[i] += lengthThresholds[i - 1];
         }
     }
-
-    // console.log(genres);
-    // console.log(lengthThresholds);
-    // console.log(targetLengthSec);
-
     const result = [];
     const resultSet = new Set();
 
@@ -392,11 +428,7 @@ router.post('/create-playlist', function (req, finalRes) {
 
 function createPlaylist(genres, genreIndex, lengthThresholds, accessToken, userID, result, resultSet, currLength, playlistName, finalRes) {
     if (genreIndex >= genres.length) {
-        // create playlist
-        // console.log(result);
-        // console.log(userID);
-
-        var createPlaylistOptions = {
+        const createPlaylistOptions = {
             url: 'https://api.spotify.com/v1/users/' + userID + '/playlists',
             body: JSON.stringify({
                 'name': playlistName,
@@ -414,84 +446,51 @@ function createPlaylist(genres, genreIndex, lengthThresholds, accessToken, userI
                 const playlistID = JSON.parse(body).id;
                 finalRes.send(playlistID);
                 addSongsToPlaylist(shuffle(result), 0, userID, playlistID, accessToken)
-                // // console.log(body);
-                // const playlistID = JSON.parse(body).id;
-                // // console.log('PLAYLISTID');
-                // // console.log(playlistID);
-                // finalRes.send(playlistID);
-                // let populatePlaylistOptions = {
-                //     url: 'https://api.spotify.com/v1/users/' + userID + '/playlists/' + playlistID + '/tracks',
-                //     body: JSON.stringify(shuffle(result)),
-                //     dataType: 'json',
-                //     headers: {
-                //         'Authorization': 'Bearer ' + accessToken,
-                //         'Content-Type': 'application/json',
-                //     }
-                // };
-                //
-                // console.log(populatePlaylistOptions);
-                //
-                // request.post(populatePlaylistOptions, function (error, response, body) {
-                //     if (!error) {
-                //         // console.log(body);
-                //         finalRes.send(playlistID);
-                //     } else {
-                //         console.log(error);
-                //         // finalRes.send(-1);
-                //     }
-                // });
             } else {
                 console.log(error);
                 finalRes.send(-1);
             }
         });
-
     } else {
-        // console.log(genres[genreIndex]);
-        database.ref('/song-ids/' + genres[genreIndex]).once('value').then(function (snapshot) {
-            // console.log(snapshot.val());
-            // console.log(Object.values(snapshot.val()));
-            const genreSongs = shuffle(Object.values(snapshot.val()));
-            // console.log(genreSongs);
-
-            let newSongsAvailable = false;
-            for (let i = 0; i < genreSongs.length; i++) {
-                newSongsAvailable = newSongsAvailable || (!resultSet.has(genreSongs[i].id));
-            }
-
-            let i = 0;
-
-            let thisGenreSet = new Set();
-
-            while (currLength < lengthThresholds[genreIndex]) {
-                const id = genreSongs[i].id;
-                if (!newSongsAvailable || !resultSet.has(id)) {
-                    thisGenreSet.add(id);
-                    result.push('spotify:track:' + id);
-                    currLength += genreSongs[i]['duration-sec'];
-                    // console.log(currLength);
+        database.ref('num-songs').once('value').then(function (snapshot) {
+            const numSongs = snapshot.val();
+            const startIndex = Math.floor(Math.random() * numSongs);
+            const numSongsToPull = Math.ceil((lengthThresholds[genreIndex] - currLength) / 150);
+            database.ref('/song-ids/' + genres[genreIndex])
+                .orderByChild('random-key')
+                .startAt(startIndex)
+                .limitToFirst(numSongsToPull)
+                .once('value').then(function (snapshot) {
+                const genreSongs = shuffle(Object.values(snapshot.val()));
+                let newSongsAvailable = false;
+                for (let i = 0; i < genreSongs.length; i++) {
+                    newSongsAvailable = newSongsAvailable || (!resultSet.has(genreSongs[i].id));
                 }
-                i = (i + 1) % genreSongs.length;
-            }
-            // console.log(result.length);
 
-            for (let item of thisGenreSet) resultSet.add(item);
+                let i = 0;
 
-            // console.log(result.length);
+                let thisGenreSet = new Set();
 
-            createPlaylist(genres, genreIndex + 1, lengthThresholds, accessToken, userID, result, resultSet, currLength, playlistName, finalRes);
+                while (currLength < lengthThresholds[genreIndex]) {
+                    const id = genreSongs[i].id;
+                    if (!newSongsAvailable || !resultSet.has(id)) {
+                        thisGenreSet.add(id);
+                        result.push('spotify:track:' + id);
+                        currLength += genreSongs[i]['duration-sec'];
+                    }
+                    i = (i + 1) % genreSongs.length;
+                }
+                for (let item of thisGenreSet) resultSet.add(item);
+                createPlaylist(genres, genreIndex + 1, lengthThresholds, accessToken, userID, result, resultSet, currLength, playlistName, finalRes);
+            });
         });
     }
 }
 
 function addSongsToPlaylist(allSongIDs, index, userID, playlistID, accessToken) {
-    // console.log('PLAYLISTID');
-    // console.log(playlistID);
-
     if (index >= allSongIDs.length) {
         return;
     }
-
     let requestSongIDs = [];
     const limit = index + 99;
     while (index < Math.min(limit, allSongIDs.length)) {
@@ -508,16 +507,11 @@ function addSongsToPlaylist(allSongIDs, index, userID, playlistID, accessToken) 
             'Content-Type': 'application/json',
         }
     };
-
-    // console.log(populatePlaylistOptions);
-
     request.post(populatePlaylistOptions, function (error, response, body) {
         if (!error) {
-            // console.log(body);
             addSongsToPlaylist(allSongIDs, index, userID, playlistID, accessToken);
         } else {
             console.log(error);
-            // finalRes.send(-1);
         }
     });
 }

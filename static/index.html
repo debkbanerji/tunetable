@@ -325,8 +325,8 @@
         <div class="row advanced-buttons-row">
             <form class="form-style-1" action="" id="submit-album-container">
                 <br>
-                <label for="album-id-to-scrape">
-                    <span>Album Link: </span><input type="text" id="album-id-to-scrape"
+                <label for="id-to-scrape">
+                    <span>Album Link: </span><input type="text" id="id-to-scrape"
                                                     placeholder="Enter Spotify Link"/>
                 </label>
                 <button class="fancy-button" id="get-album-info">Submit</button>
@@ -469,16 +469,26 @@
 
             function addGetAlbumInfoListener() {
                 document.getElementById('get-album-info').addEventListener('click', function () {
-                    const albumIdSplit = document.getElementById('album-id-to-scrape').value.split('/');
+                    let value = document.getElementById('id-to-scrape').value;
+                    const albumIdSplit = value.split('/');
+                    const id = albumIdSplit[albumIdSplit.length - 1];
+                    let url;
+                    if (value.match(/album/i)) {
+                        url = '/api/add-album/' + id;
+                    } else if (value.match(/artist/i)) {
+                        url = '/api/add-artist/' + id;
+                    } else {
+                        url = '/api/add-song/' + id;
+                    }
                     $.ajax({
                         type: "POST",
-                        url: '/api/add-album/' + albumIdSplit[albumIdSplit.length - 1],
+                        url: url,
                         data: {
                             'access_token': access_token
                         }
                     }).done(function (data) {
                         console.log(data);
-                        document.getElementById('album-id-to-scrape').value = null;
+//                        document.getElementById('id-to-scrape').value = null;
                         toggleSubmitAlbumBox();
                     });
                 }, false);
@@ -506,7 +516,6 @@
                     success: function (response) {
                         const genreList = response;
                         const sliderCollection = document.getElementById('slider-collection');
-//                        console.log(sliderCollection);
                         while (sliderCollection.firstChild) {
                             sliderCollection.removeChild(sliderCollection.firstChild);
                         }
@@ -514,7 +523,6 @@
                             const genre = genreList[i];
                             if ((!useCommonGenres || commonGenres.includes(genre)) && !genre.match(/christmas/gi)) {
                                 const titleCaseGenre = toTitleCase(genre);
-//                            const genre = genreList[i].replace(/[^\w\s]/gi, '').replace(/\s/, '');
                                 let container = `
                                 <div class="col-lg-3 col-xs-6 slider-padding slider-text">
                                     <input type="range" min="0" max="100" value="0" class="slider" title="VARIABLE_GENRE" id="VARIABLE_GENRE">
@@ -585,10 +593,7 @@
                         }
                     }
                     const playlistName = document.getElementById('playlist-name').value;
-
-//                    console.log(document.getElementById('duration'));
                     const timerString = document.getElementById('duration').value;
-                    console.log(timerString);
 
                     const hours = Number(timerString.split(' h,')[0]);
                     let minutes = Number(timerString.split(' h,')[1].split(' m')[0]);
@@ -605,7 +610,6 @@
                         setErrorMessage('Please Enter a valid playlist name.');
                     } else {
                         document.getElementById('playlist-name').value = null;
-//                        console.log(playlistName);
                         $.ajax({
                             type: "POST",
                             url: '/api/create-playlist/',
