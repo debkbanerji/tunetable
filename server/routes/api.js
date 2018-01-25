@@ -147,7 +147,7 @@ router.get('/refresh_token', function (req, res) {
     });
 });
 
-processAlbum = function (albumId, accessToken) {
+processAlbum = function (albumId, accessToken, finalRes) {
 
     const requestURL = 'https://api.spotify.com/v1/albums/' + albumId;
 
@@ -174,6 +174,9 @@ processAlbum = function (albumId, accessToken) {
                     const genres = artistInfo.genres;
 
                     addAlbumToDatabase(albumInfo, genres);
+                    if (finalRes) {
+                        finalRes.send('Album \'' + albumInfo.name + '\' added to database')
+                    }
                 } else {
                     console.log(error);
                     console.log(response);
@@ -186,7 +189,7 @@ processAlbum = function (albumId, accessToken) {
     });
 };
 
-processArtist = function (artistId, accessToken) {
+processArtist = function (artistId, accessToken, finalRes) {
     request({
         url: 'https://api.spotify.com/v1/artists/' + artistId + '/albums',
         method: 'GET',
@@ -196,6 +199,9 @@ processArtist = function (artistId, accessToken) {
     }, function (error, response, body) {
         if (!error && response.statusCode === 200) {
             const artistAlbumInfo = JSON.parse(body).items;
+            if (finalRes) {
+                finalRes.send('Added ' + artistAlbumInfo.length + ' albums to database')
+            }
             for (let album of artistAlbumInfo) {
                 processAlbum(album.id, accessToken);
             }
@@ -209,42 +215,37 @@ processArtist = function (artistId, accessToken) {
 router.post('/add-album/:id', function (req, finalRes) {
     const albumId = req.params.id;
     const accessToken = req.body.access_token;
-    processAlbum(albumId, accessToken);
+    processAlbum(albumId, accessToken, finalRes);
 });
 
 router.post('/add-artist/:id', function (req, finalRes) {
     const artistId = req.params.id;
     const accessToken = req.body.access_token;
-    processArtist(artistId, accessToken);
+    processArtist(artistId, accessToken, finalRes);
 });
 
 router.post('/add-song/:id', function (req, finalRes) {
     const songId = req.params.id;
     const accessToken = req.body.access_token;
-    addSong(songId, accessToken);
+    processSong(songId, accessToken, function () {
+
+    }, function () {
+
+    }, finalRes);
 });
 
 addAlbumToDatabase = function (album, genres) {
-    const tracks = album.tracks.items;
-    // const songData = [];
-    for (let i = 0; i < tracks.length; i++) {
-        addSongToDatabase(tracks[i].id, tracks[i].duration_ms, genres, function () {
-            // console.log('added track ' + tracks[i].id);
+    const songs = album.tracks.items;
+    for (let i = 0; i < songs.length; i++) {
+        addSongToDatabase(songs[i].id, songs[i].duration_ms, genres, function () {
+            // console.log('added songs ' + songs[i].id);
         })
     }
-
-
-    // for (let i = 0; i < genres.length; i++) {
-    //     database.ref('genre-directory/' + genres[i]).set(genres[i]);
-    //     for (let j = 0; j < songData.length; j++) {
-    //         database.ref('song-ids/' + genres[i] + '/' + songData[j].id).set(songData[j]);
-    //     }
-    // }
 };
 
 addSongToDatabase = function (song_id, duration_ms, genres, callback) {
     database.ref('song-ids/' + genres[0] + '/' + song_id).once('value').then(function (snapshot) {
-        if (snapshot.val() === null) {
+        if (!snapshot.exists()) {
             const randomKey = Math.floor(Math.random() * Number.MAX_SAFE_INTEGER);
             const song = {
                 'id': song_id,
@@ -286,10 +287,9 @@ router.post('/process-top-songs/', function (req, res) {
 
 recursivelyAddSongs = function (ids, index, accessToken) {
 
-    // console.log('Adding ' + ids[index]);
     if (index < ids.length) {
         setTimeout(function () {
-                addSong(ids[index], accessToken, function () {
+                processSong(ids[index], accessToken, function () {
                     recursivelyAddSongs(ids, index + 1, accessToken);
                 })
             }, 1000
@@ -297,7 +297,7 @@ recursivelyAddSongs = function (ids, index, accessToken) {
     }
 };
 
-addSong = function (songId, access_token, callback, errorCallback) {
+processSong = function (songId, access_token, callback, errorCallback, finalRes) {
     const requestURL = 'https://api.spotify.com/v1/tracks/' + songId;
 
     request({
@@ -320,6 +320,10 @@ addSong = function (songId, access_token, callback, errorCallback) {
                 if (!error && response.statusCode === 200) {
                     const artistInfo = JSON.parse(body);
                     const genres = artistInfo.genres;
+
+                    if (finalRes) {
+                        finalRes.send('\'' + songInfo.name + '\' added to database')
+                    }
 
                     addSongToDatabase(songId, songInfo.duration_ms, genres, function () {
 
