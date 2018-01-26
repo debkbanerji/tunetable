@@ -311,14 +311,14 @@
         <div class="row advanced-buttons-row">
             <button type="button" id="advanced-mode-button" class="fancy-button text-center">Toggle Advanced Mode
             </button>
-            <button type="button" id="toggle-submit-button" class="fancy-button text-center">Add Music</button>
+            <button type="button" id="toggle-submit-button" class="fancy-button text-center">Submit Music</button>
         </div>
         <div class="row advanced-buttons-row">
             <form class="form-style-1" action="" id="submit-container">
                 <br>
                 <label for="id-to-scrape">
                     <span>Spotify Link: </span><input type="text" id="id-to-scrape"
-                                                    placeholder="Artist/Album/Song Link"/>
+                                                      placeholder="Artist/Album/Song/Playlist"/>
                 </label>
                 <button class="fancy-button" id="submit-link">Submit</button>
             </form>
@@ -435,11 +435,14 @@
                     let value = document.getElementById('id-to-scrape').value;
                     const idSplit = value.split('/');
                     const id = idSplit[idSplit.length - 1];
+                    const playlist_user_id = idSplit[idSplit.length - 3];
                     let url;
                     if (value.match(/album/i)) {
                         url = '/api/add-album/' + id;
                     } else if (value.match(/artist/i)) {
                         url = '/api/add-artist/' + id;
+                    } else if (value.match(/playlist/i)) {
+                        url = '/api/add-playlist/' + playlist_user_id + '/' + id;
                     } else {
                         url = '/api/add-song/' + id;
                     }
@@ -521,7 +524,7 @@
                 const toggleSubmissionButton = document.getElementById('toggle-submit-button');
                 if (submitShown) {
                     submitContainer.style.display = 'none';
-                    toggleSubmissionButton.innerHTML = 'Submit';
+                    toggleSubmissionButton.innerHTML = 'Add Music';
                 } else {
                     submitContainer.style.display = 'block';
                     toggleSubmissionButton.innerHTML = 'Hide';

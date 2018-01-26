@@ -147,6 +147,42 @@ router.get('/refresh_token', function (req, res) {
     });
 });
 
+processPlaylist = function (playlistId, userId, accessToken, finalRes) {
+
+    const requestURL = 'https://api.spotify.com/v1/users/' + userId + '/playlists/' + playlistId;
+
+    request({
+        url: requestURL,
+        method: 'GET',
+        auth: {
+            'bearer': accessToken
+        }
+    }, function (error, response, body) {
+        if (!error && response.statusCode === 200) {
+            const playlistInfo = JSON.parse(body);
+
+            for (let i = 0; i < playlistInfo.tracks.items.length; i++) {
+                const song = playlistInfo.tracks.items[i];
+                const songId = song.track.id;
+                setTimeout(function () {
+
+                    processSong(songId, accessToken, function () {
+
+                    }, function () {
+
+                    }, null);
+                }, i * 500);
+            }
+            if (finalRes) {
+                finalRes.send('Playlist \'' + playlistInfo.name + '\' added to database')
+            }
+        } else {
+            console.log(error);
+            console.log(response);
+        }
+    });
+};
+
 processAlbum = function (albumId, accessToken, finalRes) {
 
     const requestURL = 'https://api.spotify.com/v1/albums/' + albumId;
@@ -222,6 +258,13 @@ router.post('/add-artist/:id', function (req, finalRes) {
     const artistId = req.params.id;
     const accessToken = req.body.access_token;
     processArtist(artistId, accessToken, finalRes);
+});
+
+router.post('/add-playlist/:uid/:id', function (req, finalRes) {
+    const albumId = req.params.id;
+    const userId = req.params.uid;
+    const accessToken = req.body.access_token;
+    processPlaylist(albumId, userId, accessToken, finalRes);
 });
 
 router.post('/add-song/:id', function (req, finalRes) {
