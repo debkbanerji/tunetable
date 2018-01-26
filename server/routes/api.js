@@ -295,17 +295,18 @@ addSongToDatabase = function (song_id, duration_ms, genres, callback) {
                 'random-key': randomKey,
                 'duration-sec': duration_ms / 1000
             };
-            const numSongsRef = database.ref('num-songs');
 
             for (let i = 0; i < genres.length; i++) {
-                database.ref('genre-directory/' + genres[i]).set(genres[i]);
-                database.ref('song-ids/' + genres[i] + '/' + song_id).set(song)
+                let genre = genres[i];
+                database.ref('genre-directory/' + genre).set(genre);
+                database.ref('song-ids/' + genre + '/' + song_id).set(song)
                     .then(function () {
-                        if (i === 0) {
+                        // if (i === 0) {
+                            const numSongsRef = database.ref('num-songs/' + genre);
                             numSongsRef.transaction(function (current_value) {
                                 return (current_value || 0) + 1;
                             });
-                        }
+                        // }
                     })
                     .then(callback);
             }
@@ -468,7 +469,7 @@ function createPlaylist(genres, genreIndex, lengthThresholds, accessToken, userI
             }
         });
     } else {
-        database.ref('num-songs').once('value').then(function (snapshot) {
+        database.ref('num-songs/' + genres[genreIndex]).once('value').then(function (snapshot) {
             const numSongs = snapshot.val();
             const startIndex = Math.floor(Math.random() * numSongs);
             const numSongsToPull = Math.ceil((lengthThresholds[genreIndex] - currLength) / 150);
